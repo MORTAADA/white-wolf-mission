@@ -1,0 +1,1804 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes" />
+  <title>Mission of the White Wolf</title>
+  <style>
+    /* ===== RESET & BASE ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: #0a0e14;
+      color: #e2e8f0;
+      padding-bottom: 80px;
+      min-height: 100vh;
+    }
+    a, button, .clickable {
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    button {
+      background: none;
+      border: none;
+      color: inherit;
+      font: inherit;
+      padding: 6px 12px;
+      border-radius: 8px;
+      touch-action: manipulation;
+      transition: all 0.2s ease;
+    }
+    button:active { transform: scale(0.95); }
+    input, select, textarea {
+      font: inherit;
+      background: #141c26;
+      border: 1px solid #2a3442;
+      color: #e2e8f0;
+      border-radius: 10px;
+      padding: 12px 14px;
+      width: 100%;
+      font-size: 16px;
+      outline: none;
+      transition: border 0.2s;
+    }
+    input:focus, select:focus, textarea:focus { border-color: #4b7bec; }
+    textarea { resize: vertical; min-height: 70px; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #121a24; }
+    ::-webkit-scrollbar-thumb { background: #2f3d52; border-radius: 10px; }
+
+    /* ===== LAYOUT ===== */
+    .app {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 16px 18px 90px;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 0 12px;
+      border-bottom: 1px solid #1e2733;
+      margin-bottom: 24px;
+    }
+    .header h1 {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: linear-gradient(135deg, #c0d0f0, #7a9bcb);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .header h1 span {
+      font-weight: 300;
+      -webkit-text-fill-color: #6b7f9a;
+      font-size: 18px;
+    }
+    .wolf-icon {
+      font-size: 30px;
+      -webkit-text-fill-color: initial;
+      color: #c0d0f0;
+    }
+
+    /* ===== BOTTOM NAV ===== */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(14, 20, 28, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-top: 1px solid #222b38;
+      display: flex;
+      justify-content: space-around;
+      padding: 8px 0 env(safe-area-inset-bottom, 8px);
+      z-index: 100;
+    }
+    .bottom-nav button {
+      flex: 1;
+      text-align: center;
+      font-size: 11px;
+      padding: 6px 0;
+      color: #6b7f9a;
+      border-radius: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+    }
+    .bottom-nav button.active {
+      color: #8fb3e6;
+      font-weight: 600;
+    }
+    .bottom-nav button .nav-icon {
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    /* ===== CARDS ===== */
+    .card {
+      background: #111a24;
+      border-radius: 18px;
+      padding: 18px;
+      margin-bottom: 18px;
+      border: 1px solid #1d2735;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+    .card-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #c8d6e5;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .card-title .badge {
+      font-size: 12px;
+      font-weight: 500;
+      background: #1f2a3a;
+      padding: 2px 12px;
+      border-radius: 30px;
+      color: #8ba2c0;
+    }
+
+    /* ===== STATUS COLORS ===== */
+    .status-0 { color: #5a6f86; }
+    .status-1 { color: #e89c6a; }   /* orange */
+    .status-2 { color: #e8cc6a; }   /* jaune */
+    .status-3 { color: #6a9ce8; }   /* bleu */
+    .status-4 { color: #6ae8a5; }   /* vert */
+
+    /* ===== PROGRESS BAR ===== */
+    .progress-bar {
+      height: 6px;
+      background: #1f2a3a;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 8px 0;
+    }
+    .progress-bar .fill {
+      height: 100%;
+      border-radius: 20px;
+      transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      background: #4b7bec;
+    }
+    .progress-bar .fill.weak { background: #e86a6a; }
+    .progress-bar .fill.medium { background: #e8cc6a; }
+    .progress-bar .fill.strong { background: #6ae8a5; }
+
+    /* ===== SUBJECT GRID ===== */
+    .subject-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .subject-card {
+      background: #0e161f;
+      border-radius: 16px;
+      padding: 16px 14px;
+      border-left: 4px solid #2a3a4a;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: 1px solid #1a2430;
+    }
+    .subject-card:active { background: #182230; transform: scale(0.98); }
+    .subject-card h4 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      line-height: 1.2;
+      color: #e2e8f0;
+    }
+    .subject-card .sub-meta {
+      font-size: 12px;
+      color: #6b7f9a;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* ===== TOPIC LIST ===== */
+    .topic-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid #16202c;
+    }
+    .topic-item:last-child { border-bottom: 0; }
+    .topic-item .left {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .topic-item .left .name {
+      font-size: 15px;
+      font-weight: 500;
+    }
+    .topic-item .left .sub {
+      font-size: 12px;
+      color: #6b7f9a;
+    }
+    .topic-item .right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* ===== TASK ITEM ===== */
+    .task-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #16202c;
+    }
+    .task-item:last-child { border-bottom: 0; }
+    .task-item .task-left {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .task-item .task-left .task-text {
+      font-size: 15px;
+      font-weight: 500;
+    }
+    .task-item .task-left .task-meta {
+      font-size: 12px;
+      color: #6b7f9a;
+    }
+    .task-item .task-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .task-item .task-priority {
+      font-size: 11px;
+      padding: 2px 10px;
+      border-radius: 20px;
+      font-weight: 500;
+    }
+    .task-priority.Haute { background: #3d1f1f; color: #e86a6a; }
+    .task-priority.Moyenne { background: #3d351f; color: #e8cc6a; }
+    .task-priority.Basse { background: #1f2a3a; color: #8ba2c0; }
+    .task-done { text-decoration: line-through; opacity: 0.6; }
+
+    /* ===== POMODORO ===== */
+    .pomodoro-container {
+      text-align: center;
+      padding: 10px 0;
+    }
+    .pomodoro-container .timer-display {
+      font-size: 48px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 2px;
+      margin: 8px 0;
+      color: #c8d6e5;
+    }
+    .pomodoro-container .timer-controls {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin: 12px 0 4px;
+    }
+    .pomodoro-container .timer-controls button {
+      padding: 8px 18px;
+      font-weight: 500;
+      border: 1px solid #2a3442;
+      border-radius: 10px;
+    }
+    .pomodoro-container .timer-controls .btn-start { border-color: #4b7bec; color: #8fb3e6; }
+    .pomodoro-container .timer-controls .btn-start.running { border-color: #e8cc6a; color: #e8cc6a; }
+    .pomodoro-container .timer-controls .btn-stop { border-color: #e86a6a; color: #e86a6a; }
+    .pomodoro-container .timer-controls .btn-reset { border-color: #6b7f9a; color: #6b7f9a; }
+    .pomodoro-container .timer-settings {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .pomodoro-container .timer-settings select, 
+    .pomodoro-container .timer-settings input {
+      width: auto;
+      padding: 6px 10px;
+      font-size: 13px;
+      background: #0a0e14;
+      border: 1px solid #2a3442;
+      border-radius: 8px;
+      color: #e2e8f0;
+      text-align: center;
+    }
+    .pomodoro-container .timer-settings label {
+      font-size: 13px;
+      color: #6b7f9a;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* ===== PROGRAMMING CATEGORIES ===== */
+    .prog-category {
+      background: #0e161f;
+      border-radius: 16px;
+      padding: 12px 16px;
+      margin-bottom: 14px;
+      border: 1px solid #1a2430;
+    }
+    .prog-category .cat-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+      font-size: 16px;
+      color: #c8d6e5;
+      margin-bottom: 6px;
+    }
+    .prog-category .cat-header .cat-icon { font-size: 20px; }
+    .prog-category .cat-header .cat-count {
+      margin-left: auto;
+      font-size: 12px;
+      color: #6b7f9a;
+      background: #1a2430;
+      padding: 2px 10px;
+      border-radius: 20px;
+    }
+
+    /* ===== BUTTONS ===== */
+    .btn-primary {
+      background: #2a3f60;
+      color: #e2e8f0;
+      padding: 10px 20px;
+      border-radius: 12px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid #3a557a;
+    }
+    .btn-primary:active { background: #1f3350; }
+    .btn-outline {
+      border: 1px solid #2a3442;
+      padding: 6px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      color: #8ba2c0;
+    }
+    .btn-outline:active { background: #1a2430; }
+    .btn-small { padding: 4px 12px; font-size: 13px; border-radius: 8px; }
+
+    /* ===== MODAL ===== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      z-index: 200;
+      padding: 20px;
+    }
+    .modal-content {
+      background: #111a24;
+      border-radius: 24px 24px 20px 20px;
+      max-width: 500px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 24px 20px;
+      border: 1px solid #1d2735;
+    }
+    .modal-content h3 { font-size: 20px; margin-bottom: 16px; }
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 20px;
+    }
+
+    /* ===== STATS / MISC ===== */
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      font-size: 14px;
+      border-bottom: 1px solid #16202c;
+    }
+    .stat-row .label { color: #6b7f9a; }
+    .stat-row .value { font-weight: 500; }
+    .chip {
+      display: inline-block;
+      background: #1a2430;
+      padding: 3px 12px;
+      border-radius: 30px;
+      font-size: 12px;
+      color: #8ba2c0;
+    }
+
+    /* ===== PLANNING EDIT ===== */
+    .planning-day-edit {
+      background: #0e161f;
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 12px;
+      border: 1px solid #1a2430;
+    }
+    .planning-day-edit .day-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .planning-day-edit input {
+      background: #0a0e14;
+      border: 1px solid #1a2430;
+      padding: 8px 12px;
+      border-radius: 8px;
+      color: #e2e8f0;
+      width: 100%;
+      font-size: 14px;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (min-width: 600px) {
+      .app { padding: 24px 30px 90px; }
+      .subject-grid { grid-template-columns: 1fr 1fr 1fr; }
+      .bottom-nav button { font-size: 13px; gap: 4px; }
+    }
+    @media (min-width: 900px) {
+      .app { max-width: 1000px; }
+      .subject-grid { grid-template-columns: 1fr 1fr 1fr; }
+      .bottom-nav { display: none; }
+      body { padding-bottom: 0; }
+    }
+
+    /* ===== UTILITY ===== */
+    .flex { display: flex; }
+    .flex-between { display: flex; justify-content: space-between; align-items: center; }
+    .gap-8 { gap: 8px; }
+    .gap-12 { gap: 12px; }
+    .mt-8 { margin-top: 8px; }
+    .mt-16 { margin-top: 16px; }
+    .mb-8 { margin-bottom: 8px; }
+    .text-center { text-align: center; }
+    .text-muted { color: #6b7f9a; }
+    .text-small { font-size: 13px; }
+    .text-bold { font-weight: 600; }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+<div id="root"></div>
+
+<script>
+  // ============================================================
+  //  MISSION OF THE WHITE WOLF — VERSION FINALE (ONBOARDING PRO)
+  // ============================================================
+
+  (function() {
+    'use strict';
+
+    // ---------- MATIÈRES S1 ----------
+    const MASTER_SUBJECTS = [
+      { id: 's1', code: 'CHM-101', name: 'Spectroscopie moléculaire', semester: 'S1', credits: 5 },
+      { id: 's2', code: 'CHM-102', name: 'Spectroscopie atomique', semester: 'S1', credits: 4 },
+      { id: 's3', code: 'CHM-103', name: 'Chimie analytique', semester: 'S1', credits: 6 },
+      { id: 's4', code: 'CHM-104', name: 'Séparation et analyse chromatographique', semester: 'S1', credits: 5 },
+      { id: 's5', code: 'CHM-105', name: 'Méthodes d’analyse des solides', semester: 'S1', credits: 4 },
+      { id: 's6', code: 'QAL-101', name: 'Normes et qualité', semester: 'S1', credits: 3 },
+      { id: 's7', code: 'HSE-101', name: 'Hygiène, sécurité et qualité', semester: 'S1', credits: 3 },
+      { id: 's8', code: 'GEN-101', name: 'Génie chimique', semester: 'S1', credits: 5 },
+      { id: 's9', code: 'ENE-101', name: 'Efficacité énergétique', semester: 'S1', credits: 4 }
+    ];
+
+    // ---------- CHAPITRES S1 ----------
+    const TOPICS_SEED = [
+      { id: 's1_1', subject_id: 's1', title: 'UV/Visible' },
+      { id: 's1_2', subject_id: 's1', title: 'Spectroscopie infrarouge (IR)' },
+      { id: 's1_3', subject_id: 's1', title: 'RMN du proton (1H NMR)' },
+      { id: 's1_4', subject_id: 's1', title: 'RMN du carbone 13 (13C NMR)' },
+      { id: 's1_5', subject_id: 's1', title: 'Spectroscopie d’absorption atomique' },
+      { id: 's1_6', subject_id: 's1', title: 'Spectroscopie d’émission atomique' },
+      { id: 's1_7', subject_id: 's1', title: 'Complémentarité des techniques spectroscopiques' },
+      { id: 's1_8', subject_id: 's1', title: 'Élucidation des structures chimiques' },
+      { id: 's2_1', subject_id: 's2', title: 'Chapitre I — AAS avec flamme' },
+      { id: 's2_2', subject_id: 's2', title: 'Chapitre II — Perturbations/interférences' },
+      { id: 's2_3', subject_id: 's2', title: 'Chapitre III — AAS électrothermique' },
+      { id: 's2_4', subject_id: 's2', title: 'Chapitre IV — Génération d\'hydrures' },
+      { id: 's2_5', subject_id: 's2', title: 'Chapitre V — Émission atomique flamme' },
+      { id: 's2_6', subject_id: 's2', title: 'Chapitre VI — Émission atomique plasma' },
+      { id: 's2_7', subject_id: 's2', title: 'Applications — Normes ISO' },
+      { id: 's3_1', subject_id: 's3', title: 'Chapitre 1 — Introduction, erreurs, statistiques' },
+      { id: 's3_2', subject_id: 's3', title: 'Chapitre 2 — Échantillonnage' },
+      { id: 's3_3', subject_id: 's3', title: 'Chapitre 3 — Chimie en solution aqueuse' },
+      { id: 's3_4', subject_id: 's3', title: 'Chapitre 4 — Méthodes titrimétriques' },
+      { id: 's3_5', subject_id: 's3', title: 'Chapitre 5 — Titrages acido-basiques' },
+      { id: 's3_6', subject_id: 's3', title: 'Chapitre 6 — Titrages par précipitation' },
+      { id: 's3_7', subject_id: 's3', title: 'Chapitre 7 — Titrages complexométriques' },
+      { id: 's3_8', subject_id: 's3', title: 'Chapitre 8 — Titrages d\'oxydoréduction' },
+      { id: 's3_9', subject_id: 's3', title: 'Chapitre 9 — Méthodes gravimétriques' },
+      { id: 's4_1', subject_id: 's4', title: 'Chromatographie liquide : grandeurs' },
+      { id: 's4_2', subject_id: 's4', title: 'Types de chromatographie' },
+      { id: 's4_3', subject_id: 's4', title: 'Équipements et détecteurs' },
+      { id: 's4_4', subject_id: 's4', title: 'Optimisation des conditions' },
+      { id: 's4_5', subject_id: 's4', title: 'Chromatographie en phase gazeuse (GC)' },
+      { id: 's4_6', subject_id: 's4', title: 'Électrophorèse capillaire' },
+      { id: 's4_7', subject_id: 's4', title: 'Couplage LC/MS' },
+      { id: 's5_1', subject_id: 's5', title: 'Microscopie électronique / MET-EDX' },
+      { id: 's5_2', subject_id: 's5', title: 'Diffraction X sur poudres' },
+      { id: 's5_3', subject_id: 's5', title: 'Taille moyenne : Debye-Scherrer' },
+      { id: 's5_4', subject_id: 's5', title: 'Analyse qualitative des éléments' },
+      { id: 's5_5', subject_id: 's5', title: 'Analyse thermique : ATG et ATD' },
+      { id: 's5_6', subject_id: 's5', title: 'Couplage ATG-CPG-MS' },
+      { id: 's5_7', subject_id: 's5', title: 'Analyse mécanique composites' },
+      { id: 's6_1', subject_id: 's6', title: 'Partie 1 — Standards / Normes' },
+      { id: 's6_2', subject_id: 's6', title: 'Partie 2 — Management de la qualité' },
+      { id: 's7_1', subject_id: 's7', title: 'Gestion des risques industriels' },
+      { id: 's7_2', subject_id: 's7', title: 'Prévention et gestion opérationnelle' },
+      { id: 's7_3', subject_id: 's7', title: 'Réglementation industrielle' },
+      { id: 's7_4', subject_id: 's7', title: 'Risques d’incendie' },
+      { id: 's7_5', subject_id: 's7', title: 'Hygiène et environnement' },
+      { id: 's8_1', subject_id: 's8', title: 'Bilans matière et chaleur' },
+      { id: 's8_2', subject_id: 's8', title: 'Mécanique des fluides' },
+      { id: 's8_3', subject_id: 's8', title: 'Régimes laminaire/turbulent' },
+      { id: 's8_4', subject_id: 's8', title: 'Lits fixes et fluidisés' },
+      { id: 's8_5', subject_id: 's8', title: 'Transfert thermique' },
+      { id: 's8_6', subject_id: 's8', title: 'Transfert de matière' },
+      { id: 's9_1', subject_id: 's9', title: 'Partie I — Concept d’énergie' },
+      { id: 's9_2', subject_id: 's9', title: 'Partie II — Sources d’énergie' },
+      { id: 's9_3', subject_id: 's9', title: 'Partie III — Transformation industrielle' },
+      { id: 's9_4', subject_id: 's9', title: 'Équipements industriels' },
+      { id: 's9_5', subject_id: 's9', title: 'Partie IV — Efficacité énergétique papier' }
+    ];
+
+    // ---------- PROGRAMMING ROADMAP ----------
+    const PROGRAMMING_TOPICS = [
+      { id: 'web1', domain: 'Frontend', icon: '🌐', title: 'HTML5 (Structure & Sémantique)' },
+      { id: 'web2', domain: 'Frontend', icon: '🌐', title: 'CSS3 (Flexbox, Grid, Responsive)' },
+      { id: 'web3', domain: 'Frontend', icon: '🌐', title: 'JavaScript (ES6+ : Variables, DOM, Events)' },
+      { id: 'web4', domain: 'Frontend', icon: '🌐', title: 'React.js (Composants, Hooks, State)' },
+      { id: 'web5', domain: 'Frontend', icon: '🌐', title: 'React Native (Applications Web/Mobile)' },
+      { id: 'py1', domain: 'Python & Data', icon: '🐍', title: 'Python (Syntaxe, Boucles, Conditions)' },
+      { id: 'py2', domain: 'Python & Data', icon: '🐍', title: 'Python (Fonctions, Modules, POO)' },
+      { id: 'sql1', domain: 'Python & Data', icon: '🐍', title: 'SQL (Bases de données, Requêtes SELECT)' },
+      { id: 'sql2', domain: 'Python & Data', icon: '🐍', title: 'SQL (Jointures, Indexation, Optimisation)' },
+      { id: 'java1', domain: 'Java & C', icon: '☕', title: 'Java (Variables, Boucles, Classes)' },
+      { id: 'java2', domain: 'Java & C', icon: '☕', title: 'Java (Héritage, Polymorphisme, Collections)' },
+      { id: 'c1', domain: 'Java & C', icon: '☕', title: 'Langage C (Pointeurs, Mémoire, Structures)' },
+      { id: 'c2', domain: 'Java & C', icon: '☕', title: 'Langage C (Algorithmique et optimisation)' },
+      { id: 'git1', domain: 'Outils & Projets', icon: '🔧', title: 'Git & GitHub (Versioning, Collaboration)' },
+      { id: 'proj1', domain: 'Outils & Projets', icon: '🔧', title: 'Projet : Portfolio Web (HTML/CSS/JS)' },
+      { id: 'proj2', domain: 'Outils & Projets', icon: '🔧', title: 'Projet : Application React (To-Do List)' },
+      { id: 'proj3', domain: 'Outils & Projets', icon: '🔧', title: 'Projet : Mini jeu en Python' }
+    ];
+
+    // ---------- DEFAULT PLANNING ----------
+    const DEFAULT_SCHEDULE = {
+      lundi: '📚 Chimie analytique + Spectroscopie moléculaire + Python',
+      mardi: '📚 Chromatographie + Python / exercices • 🏋️ 19:30-22:00',
+      mercredi: '📚 Analyse des solides + Chimie analytique + OOP / fichiers',
+      jeudi: '📚 Spectroscopie moléculaire + Génie chimique • 🏋️ 19:30-22:00',
+      vendredi: '📚 Spectroscopie atomique + Chromatographie + DSA',
+      samedi: '📚 Normes & qualité / HSE + Révision + Git/GitHub • 🏋️ 19:30-22:00',
+      dimanche: '🛌 Repos'
+    };
+
+    // ---------- DATA STORE ----------
+    const DB_NAME = 'WhiteWolfDB';
+    const STORE_NAME = 'data';
+    let db = null;
+
+    function openDB() {
+      return new Promise((resolve, reject) => {
+        const req = indexedDB.open(DB_NAME, 1);
+        req.onupgradeneeded = (ev) => {
+          const d = ev.target.result;
+          if (!d.objectStoreNames.contains(STORE_NAME)) {
+            d.createObjectStore(STORE_NAME, { keyPath: 'key' });
+          }
+        };
+        req.onsuccess = (ev) => { db = ev.target.result; resolve(db); };
+        req.onerror = (ev) => reject(ev.target.error);
+      });
+    }
+
+    async function dbGet(key) {
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE_NAME, 'readonly');
+        const store = tx.objectStore(STORE_NAME);
+        const req = store.get(key);
+        req.onsuccess = () => resolve(req.result ? req.result.value : null);
+        req.onerror = () => reject(req.error);
+      });
+    }
+
+    async function dbSet(key, value) {
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE_NAME, 'readwrite');
+        const store = tx.objectStore(STORE_NAME);
+        const req = store.put({ key, value });
+        req.onsuccess = () => resolve();
+        req.onerror = () => reject(req.error);
+      });
+    }
+
+    // ---------- APP STATE ----------
+    let state = {
+      route: 'dashboard',
+      subjectId: null,
+      topicId: null,
+      subjects: [],
+      topics: [],
+      progress: {},
+      sessions: [],
+      errors: [],
+      programming: {},
+      tasks: [],
+      settings: { theme: 'dark' },
+      onboardingDone: false,
+      customSchedule: {},
+      isEditingPlanning: false,
+      modal: null,
+    };
+
+    // ---------- POMODORO STATE ----------
+    let pomodoro = {
+      workTime: 25,      // minutes
+      breakTime: 5,      // minutes
+      remaining: 25 * 60, // seconds
+      isRunning: false,
+      isBreak: false,
+      timerId: null
+    };
+
+    // ---------- HELPERS ----------
+    function generateId() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+
+    function getLevelLabel(level) {
+      const labels = ['Pas commencé', 'Découverte', 'Compris', 'Maîtrise', 'Maîtrise solide'];
+      return labels[level] || 'Inconnu';
+    }
+
+    function getStatusClass(level) {
+      return 'status-' + Math.min(Math.max(level, 0), 4);
+    }
+
+    function getProgress(topicId) {
+      return state.progress[topicId] || { level: 0, score: 0, last_studied: null, notes: '' };
+    }
+
+    function getSubjectProgress(subjectId) {
+      const tops = state.topics.filter(t => t.subject_id === subjectId);
+      if (!tops.length) return 0;
+      let total = 0, count = 0;
+      tops.forEach(t => {
+        const p = getProgress(t.id);
+        total += p.level;
+        count++;
+      });
+      return count ? Math.round((total / (count * 4)) * 100) : 0;
+    }
+
+    function computeMasteryScore(topicId) {
+      const p = getProgress(topicId);
+      const base = p.level * 25;
+      const sessions = state.sessions.filter(s => s.topic_id === topicId);
+      const bonus = Math.min(sessions.length * 2, 20);
+      return Math.min(Math.round(base + bonus), 100);
+    }
+
+    function getTasksForToday() {
+      const today = new Date().toISOString().slice(0,10);
+      return state.tasks.filter(t => t.date === today && !t.isDone);
+    }
+
+    function navigate(route, params = {}) {
+      state.route = route;
+      if (route === 'subject' && params.subjectId) state.subjectId = params.subjectId;
+      else if (route === 'topic' && params.topicId) state.topicId = params.topicId;
+      else { state.subjectId = null; state.topicId = null; }
+      state.isEditingPlanning = false;
+      render();
+    }
+
+    // ---------- RENDER ----------
+    function render() {
+      const root = document.getElementById('root');
+      if (!state.onboardingDone) {
+        root.innerHTML = renderOnboarding();
+        attachOnboardingEvents();
+        return;
+      }
+      root.innerHTML = renderApp();
+      attachAppEvents();
+    }
+
+    // ---------- ONBOARDING (تصميم جديد احترافي بدون حواف) ----------
+    function renderOnboarding() {
+      return `
+        <div style="
+          position: fixed; 
+          inset: 0; 
+          background: radial-gradient(circle at 50% 0%, #1a2438, #0a0e14 70%);
+          display: flex; 
+          align-items: center; 
+          justify-content: center; 
+          flex-direction: column; 
+          padding: 30px; 
+          text-align: center;
+          z-index: 999;
+        ">
+          
+          <!-- الشعار مع تأثير نبض -->
+          <div style="
+            font-size: 80px; 
+            margin-bottom: 16px; 
+            animation: pulse 2.5s ease-in-out infinite;
+            display: inline-block;
+          ">
+            🐺
+          </div>
+
+          <!-- العنوان الرئيسي -->
+          <h1 style="
+            font-size: 32px; 
+            font-weight: 700; 
+            letter-spacing: 0.5px; 
+            margin-bottom: 10px; 
+            color: #fff;
+          ">
+            Mission of the White Wolf
+          </h1>
+
+          <!-- الجملة التحفيزية -->
+          <p style="
+            font-size: 16px; 
+            color: #8ba2c0; 
+            margin-bottom: 30px; 
+            font-weight: 300;
+            letter-spacing: 0.8px;
+          ">
+            Study → Track → Analyze → Correct → Master
+          </p>
+
+          <!-- معلومات الماستر (بدون بطاقات) -->
+          <div style="margin-bottom: 40px; width: 100%; max-width: 400px;">
+            <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 8px;">
+              <span style="font-size: 24px;">📘</span>
+              <h2 style="font-size: 20px; font-weight: 600; color: #c8d6e5;">Master APCE — S1</h2>
+            </div>
+            <p style="font-size: 14px; color: #6b7f9a;">
+              9 matières du premier semestre. 
+              <br /><span style="color: #4b7bec; font-weight: 500;">Préparez-vous à la maîtrise.</span>
+            </p>
+          </div>
+
+          <!-- زر البدء (أكبر وبدون حواف) -->
+          <button id="onboard-finish" style="
+            background: #2a3f60; 
+            color: #fff; 
+            border: 1px solid #3a557a; 
+            padding: 16px 40px; 
+            border-radius: 50px; 
+            font-size: 18px; 
+            font-weight: 600; 
+            cursor: pointer; 
+            transition: all 0.3s ease; 
+            box-shadow: 0 4px 20px rgba(42, 63, 96, 0.4);
+            width: 100%; 
+            max-width: 320px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+          ">
+            🐺 Commencer ma mission →
+          </button>
+
+          <!-- شريط التقدم البسيط -->
+          <div style="margin-top: 24px; font-size: 12px; color: #4b5a72; letter-spacing: 1px;">
+            Étape 1 / 1
+          </div>
+
+          <!-- إضافة تأثيرات الأنيميشن بواسطة CSS -->
+          <style>
+            @keyframes pulse {
+              0% { transform: scale(0.98); opacity: 0.7; }
+              50% { transform: scale(1.05); opacity: 1; }
+              100% { transform: scale(0.98); opacity: 0.7; }
+            }
+            #onboard-finish:hover {
+              background: #354e78;
+              transform: translateY(-2px);
+              box-shadow: 0 6px 25px rgba(42, 63, 96, 0.6);
+            }
+            #onboard-finish:active {
+              transform: scale(0.95);
+            }
+          </style>
+        </div>
+      `;
+    }
+
+    function attachOnboardingEvents() {
+      document.getElementById('onboard-finish')?.addEventListener('click', () => {
+        state.onboardingDone = true;
+        dbSet('onboardingDone', true);
+        render();
+      });
+    }
+
+    // ---------- APP RENDER ----------
+    function renderApp() {
+      const active = state.route;
+      return `
+        <div class="app">
+          <div class="header">
+            <h1><span class="wolf-icon">🐺</span> White Wolf <span>v3</span></h1>
+            <div style="display:flex;gap:8px;">
+              <button id="btn-export" class="btn-outline btn-small">📤</button>
+              <button id="btn-import" class="btn-outline btn-small">📥</button>
+            </div>
+          </div>
+
+          ${renderContent(active)}
+
+          <nav class="bottom-nav">
+            <button class="${active === 'dashboard' ? 'active' : ''}" data-route="dashboard"><span class="nav-icon">📊</span> Dashboard</button>
+            <button class="${active === 'master' ? 'active' : ''}" data-route="master"><span class="nav-icon">📚</span> Master</button>
+            <button class="${active === 'programming' ? 'active' : ''}" data-route="programming"><span class="nav-icon">💻</span> Code</button>
+            <button class="${active === 'planning' ? 'active' : ''}" data-route="planning"><span class="nav-icon">📅</span> Planning</button>
+            <button class="${active === 'stats' ? 'active' : ''}" data-route="stats"><span class="nav-icon">📈</span> Stats</button>
+          </nav>
+        </div>
+        ${state.modal ? renderModal() : ''}
+      `;
+    }
+
+    function renderContent(route) {
+      switch(route) {
+        case 'dashboard': return renderDashboard();
+        case 'master': return renderMaster();
+        case 'subject': return renderSubject();
+        case 'topic': return renderTopic();
+        case 'programming': return renderProgramming();
+        case 'planning': return renderPlanning();
+        case 'stats': return renderStats();
+        case 'mistakes': return renderMistakes();
+        case 'achievements': return renderAchievements();
+        default: return renderDashboard();
+      }
+    }
+
+    // ----- DASHBOARD (مع بومودورو) -----
+    function renderDashboard() {
+      const totalTopics = state.topics.length;
+      const progressed = state.topics.filter(t => getProgress(t.id).level > 0).length;
+      const overall = totalTopics ? Math.round((progressed / totalTopics) * 100) : 0;
+      const totalSessions = state.sessions.length;
+      const todayTasks = getTasksForToday();
+
+      const mins = Math.floor(pomodoro.remaining / 60);
+      const secs = pomodoro.remaining % 60;
+      const displayTime = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+      const isRunning = pomodoro.isRunning;
+      const isBreak = pomodoro.isBreak;
+
+      return `
+        <div>
+          <div class="card">
+            <div class="card-title">Progression globale <span class="badge">${overall}%</span></div>
+            <div class="progress-bar"><div class="fill" style="width:${overall}%;${overall<30?'background:#e86a6a;':overall<60?'background:#e8cc6a;':'background:#6ae8a5;'}"></div></div>
+            <div class="flex-between text-small" style="margin-top:6px;">
+              <span>${progressed} / ${totalTopics} chapitres</span>
+              <span>${totalSessions} sessions</span>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">📋 Mes tâches du jour <span class="badge">${new Date().toLocaleDateString('fr-FR')}</span></div>
+            ${todayTasks.length ? todayTasks.map(t => `
+              <div class="task-item">
+                <div class="task-left">
+                  <span class="task-text">${t.text}</span>
+                  <span class="task-meta">${t.time || ''} • ${t.priority}</span>
+                </div>
+                <div class="task-right">
+                  <span class="task-priority ${t.priority}">${t.priority}</span>
+                  <button class="btn-small btn-outline" data-task-done="${t.id}">✅</button>
+                  <button class="btn-small btn-outline" data-task-delete="${t.id}">🗑️</button>
+                </div>
+              </div>
+            `).join('') : '<div class="text-muted text-small">Aucune tâche pour aujourd\'hui. Ajoutez-en une dans Planning.</div>'}
+          </div>
+
+          <div class="card">
+            <div class="card-title">⏱️ Minuteur Pomodoro <span class="badge">${isBreak ? '☕ Pause' : '📖 Travail'}</span></div>
+            <div class="pomodoro-container">
+              <div class="timer-display">${displayTime}</div>
+              <div class="timer-controls">
+                ${!isRunning ? `<button class="btn-start" data-pomo-start>▶️ Démarrer</button>` : `<button class="btn-start running" data-pomo-pause>⏸️ Pause</button>`}
+                <button class="btn-stop" data-pomo-stop>⏹️ Arrêter</button>
+                <button class="btn-reset" data-pomo-reset>↺ Reset</button>
+              </div>
+              <div class="timer-settings">
+                <label>
+                  🎯 Travail:
+                  <input type="number" id="pomo-work" value="${pomodoro.workTime}" min="1" max="120" style="width:50px;" ${isRunning ? 'disabled' : ''} />
+                  min
+                </label>
+                <label>
+                  ☕ Pause:
+                  <input type="number" id="pomo-break" value="${pomodoro.breakTime}" min="1" max="30" style="width:50px;" ${isRunning ? 'disabled' : ''} />
+                  min
+                </label>
+                <button class="btn-small btn-outline" data-pomo-apply>Appliquer</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Dernières activités</div>
+            ${state.sessions.slice(-5).reverse().map(s => {
+              const topic = state.topics.find(t => t.id === s.topic_id);
+              return `
+                <div class="stat-row">
+                  <span class="label">${s.type || 'Session'}</span>
+                  <span class="text-small">${topic ? topic.title : ''} ${s.duration ? '• ' + s.duration + 'm' : ''}</span>
+                </div>
+              `;
+            }).join('') || '<div class="text-muted text-small">Aucune activité récente</div>'}
+          </div>
+        </div>
+      `;
+    }
+
+    // ----- MASTER -----
+    function renderMaster() {
+      return `
+        <div>
+          <h2 style="font-size:22px;margin-bottom:16px;">📚 Master APCE — S1</h2>
+          <div class="subject-grid">
+            ${state.subjects.map(s => `
+              <div class="subject-card" data-subject-id="${s.id}">
+                <h4>${s.name}</h4>
+                <div class="sub-meta"><span>${getSubjectProgress(s.id)}%</span><span>${s.code}</span></div>
+                <div class="progress-bar"><div class="fill" style="width:${getSubjectProgress(s.id)}%;"></div></div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    // ----- SUBJECT -----
+    function renderSubject() {
+      const sub = state.subjects.find(s => s.id === state.subjectId);
+      if (!sub) return '<div class="card">Matière non trouvée</div>';
+      const tops = state.topics.filter(t => t.subject_id === sub.id);
+      return `
+        <div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
+            <button class="btn-outline btn-small" data-route="master">← Retour</button>
+            <h2 style="font-size:20px;">${sub.name}</h2>
+          </div>
+          <div class="card">
+            <div class="card-title">Chapitres <span class="badge">${tops.length}</span></div>
+            ${tops.map(t => {
+              const p = getProgress(t.id);
+              const score = p.score || computeMasteryScore(t.id);
+              return `
+                <div class="topic-item" data-topic-id="${t.id}">
+                  <div class="left">
+                    <span class="name">${t.title}</span>
+                    <span class="sub">${getLevelLabel(p.level)} • Score ${score}%</span>
+                  </div>
+                  <div class="right">
+                    <span class="${getStatusClass(p.level)}">●</span>
+                    <button class="btn-small btn-outline" data-topic-down="${t.id}">−</button>
+                    <button class="btn-small btn-outline" data-topic-up="${t.id}">+</button>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    // ----- TOPIC -----
+    function renderTopic() {
+      const topic = state.topics.find(t => t.id === state.topicId);
+      if (!topic) return '<div class="card">Chapitre non trouvé</div>';
+      const p = getProgress(topic.id);
+      const score = p.score || computeMasteryScore(topic.id);
+      return `
+        <div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
+            <button class="btn-outline btn-small" data-route="subject" data-subject-id="${topic.subject_id}">← Retour</button>
+            <h2 style="font-size:20px;">${topic.title}</h2>
+          </div>
+          <div class="card">
+            <div class="card-title">Maîtrise <span class="badge">${getLevelLabel(p.level)}</span></div>
+            <div class="flex-between">
+              <span>Score : ${score}%</span>
+              <span>Dernière étude : ${p.last_studied ? new Date(p.last_studied).toLocaleDateString('fr-FR') : 'jamais'}</span>
+            </div>
+            <div class="progress-bar"><div class="fill" style="width:${score}%;"></div></div>
+            <div style="margin-top:12px;display:flex;gap:8px;justify-content:center;">
+              <button class="btn-small btn-outline" data-topic-down="${topic.id}">−</button>
+              <button class="btn-small btn-outline" data-topic-up="${topic.id}">+</button>
+              <button class="btn-small btn-outline" data-session-topic="${topic.id}">📝 Session</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Notes</div>
+            <textarea id="topic-notes" rows="3">${p.notes || ''}</textarea>
+            <button class="btn-primary btn-small mt-8" data-save-notes="${topic.id}">Enregistrer</button>
+          </div>
+        </div>
+      `;
+    }
+
+    // ----- PROGRAMMING -----
+    function renderProgramming() {
+      const groups = {};
+      const order = ['Frontend', 'Python & Data', 'Java & C', 'Outils & Projets'];
+      const emojis = { 'Frontend': '🌐', 'Python & Data': '🐍', 'Java & C': '☕', 'Outils & Projets': '🚀' };
+
+      PROGRAMMING_TOPICS.forEach(t => {
+        if (!groups[t.domain]) groups[t.domain] = [];
+        groups[t.domain].push(t);
+      });
+
+      return `
+        <div>
+          <h2 style="font-size:22px;margin-bottom:16px;">💻 Mon Plan de Programmation</h2>
+          ${order.filter(key => groups[key]).map(key => `
+            <div class="prog-category">
+              <div class="cat-header">
+                <span class="cat-icon">${emojis[key] || '📘'}</span>
+                ${key}
+                <span class="cat-count">${groups[key].length} sujets</span>
+              </div>
+              ${groups[key].map(t => {
+                const p = state.programming[t.id] || { level: 0, score: 0 };
+                return `
+                  <div class="topic-item">
+                    <div class="left">
+                      <span class="name">${t.title}</span>
+                      <span class="sub">${getLevelLabel(p.level)}</span>
+                    </div>
+                    <div class="right">
+                      <span class="${getStatusClass(p.level)}">●</span>
+                      <button class="btn-small btn-outline" data-prog-down="${t.id}">−</button>
+                      <button class="btn-small btn-outline" data-prog-up="${t.id}">+</button>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    // ----- PLANNING -----
+    function renderPlanning() {
+      const days = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
+      const dayKeys = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'];
+      const schedule = { ...DEFAULT_SCHEDULE, ...state.customSchedule };
+      const todayTasks = state.tasks.filter(t => t.date === new Date().toISOString().slice(0,10));
+
+      if (state.isEditingPlanning) {
+        return `
+          <div>
+            <h2 style="font-size:22px;margin-bottom:16px;">📅 Modifier le planning</h2>
+            <div class="card">
+              ${dayKeys.map((key, i) => `
+                <div class="planning-day-edit">
+                  <div class="day-header">
+                    <span>${days[i]}</span>
+                    <button class="btn-small btn-outline" data-reset-day="${key}">↺ Réinitialiser</button>
+                  </div>
+                  <input type="text" id="planning-input-${key}" value="${schedule[key] || ''}" placeholder="Activités du ${days[i]}..." />
+                </div>
+              `).join('')}
+              <div class="flex gap-8 mt-16">
+                <button class="btn-primary" data-save-planning>💾 Enregistrer</button>
+                <button class="btn-outline" data-cancel-planning>Annuler</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      return `
+        <div>
+          <div class="flex-between mb-16">
+            <h2 style="font-size:22px;">📅 Planning & Tâches</h2>
+            <button class="btn-primary btn-small" data-edit-planning>✏️ Modifier</button>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Planning hebdomadaire</div>
+            ${dayKeys.map((key, i) => `
+              <div class="stat-row">
+                <span style="font-weight:500;min-width:80px;">${days[i]}</span>
+                <span class="text-small">${schedule[key] || '—'}</span>
+              </div>
+            `).join('')}
+            <div class="text-muted text-small mt-8">15:00-17:00 libre • Dimanche repos</div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">📋 Mes tâches <span class="badge">${new Date().toLocaleDateString('fr-FR')}</span></div>
+            ${todayTasks.length ? todayTasks.map(t => `
+              <div class="task-item">
+                <div class="task-left">
+                  <span class="task-text ${t.isDone ? 'task-done' : ''}">${t.text}</span>
+                  <span class="task-meta">${t.time || ''} • ${t.priority}</span>
+                </div>
+                <div class="task-right">
+                  <span class="task-priority ${t.priority}">${t.priority}</span>
+                  ${!t.isDone ? `<button class="btn-small btn-outline" data-task-done="${t.id}">✅</button>` : ''}
+                  <button class="btn-small btn-outline" data-task-delete="${t.id}">🗑️</button>
+                </div>
+              </div>
+            `).join('') : '<div class="text-muted text-small">Aucune tâche pour aujourd\'hui.</div>'}
+            <button class="btn-primary btn-small mt-8" data-add-task>➕ Ajouter une tâche</button>
+          </div>
+        </div>
+      `;
+    }
+
+    // ----- STATS -----
+    function renderStats() {
+      const totalSessions = state.sessions.length;
+      const totalTopics = state.topics.length;
+      const progressed = state.topics.filter(t => getProgress(t.id).level > 0).length;
+      let totalMinutes = 0;
+      state.sessions.forEach(s => { totalMinutes += (s.duration || 0); });
+      const totalHours = Math.round(totalMinutes / 60 * 10) / 10;
+
+      let bestSubject = null, bestPercent = -1;
+      let worstSubject = null, worstPercent = 101;
+      state.subjects.forEach(s => {
+        const p = getSubjectProgress(s.id);
+        if (p > bestPercent) { bestPercent = p; bestSubject = s; }
+        if (p < worstPercent) { worstPercent = p; worstSubject = s; }
+      });
+
+      const typeCount = {};
+      state.sessions.forEach(s => {
+        const t = s.type || 'other';
+        typeCount[t] = (typeCount[t] || 0) + 1;
+      });
+      const typeLabels = { 'theory': 'Théorie', 'exercise': 'Exercices', 'revision': 'Révision', 'test': 'Tests', 'project': 'Projets', 'other': 'Autre' };
+
+      let progDone = 0;
+      PROGRAMMING_TOPICS.forEach(t => {
+        const p = state.programming[t.id] || { level: 0 };
+        if (p.level >= 2) progDone++;
+      });
+      const progPercent = PROGRAMMING_TOPICS.length ? Math.round((progDone / PROGRAMMING_TOPICS.length) * 100) : 0;
+
+      return `
+        <div>
+          <h2 style="font-size:22px;margin-bottom:16px;">📈 Tableau de Bord Statistique</h2>
+
+          <div class="card">
+            <div class="card-title">Aperçu général</div>
+            <div class="stat-row"><span class="label">⏱️ Temps d'étude total</span><span class="value">${totalHours} heures</span></div>
+            <div class="stat-row"><span class="label">📚 Sessions enregistrées</span><span class="value">${totalSessions}</span></div>
+            <div class="stat-row"><span class="label">📖 Chapitres entamés</span><span class="value">${progressed} / ${totalTopics}</span></div>
+            <div class="stat-row"><span class="label">🏆 Progression globale</span><span class="value">${totalTopics ? Math.round((progressed/totalTopics)*100) : 0}%</span></div>
+            <div class="stat-row" style="border-bottom:0; margin-top:8px; padding-top:8px; border-top:1px solid #1a2430;">
+              <span class="label">🥇 Matière forte</span>
+              <span class="value">${bestSubject ? bestSubject.name + ' (' + bestPercent + '%)' : '—'}</span>
+            </div>
+            <div class="stat-row" style="border-bottom:0;">
+              <span class="label">⚠️ Matière faible</span>
+              <span class="value">${worstSubject ? worstSubject.name + ' (' + worstPercent + '%)' : '—'}</span>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Progression par matière <span class="badge">S1</span></div>
+            ${state.subjects.map(s => {
+              const p = getSubjectProgress(s.id);
+              return `
+                <div style="margin-bottom:12px;">
+                  <div class="flex-between text-small"><span>${s.name}</span><span>${p}%</span></div>
+                  <div class="progress-bar"><div class="fill" style="width:${p}%;${p<30?'background:#e86a6a;':p<60?'background:#e8cc6a;':'background:#6ae8a5;'}"></div></div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+
+          <div class="card">
+            <div class="card-title">Progression Programmation <span class="badge">${progPercent}%</span></div>
+            <div class="progress-bar"><div class="fill" style="width:${progPercent}%;"></div></div>
+            <div class="flex-between text-small mt-8"><span>${progDone} / ${PROGRAMMING_TOPICS.length} sujets maîtrisés</span></div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Répartition des sessions</div>
+            ${Object.keys(typeCount).length > 0 ? 
+              Object.keys(typeCount).map(key => `
+                <div class="stat-row"><span class="label">${typeLabels[key] || key}</span><span class="value">${typeCount[key]} session${typeCount[key] > 1 ? 's' : ''}</span></div>
+              `).join('') 
+              : '<div class="text-muted text-small">Aucune session enregistrée</div>'}
+          </div>
+        </div>
+      `;
+    }
+
+    // ----- MISTAKES -----
+    function renderMistakes() {
+      return `
+        <div>
+          <h2 style="font-size:22px;margin-bottom:16px;">❌ Error Bank</h2>
+          <div class="card">
+            ${state.errors.length ? state.errors.map(e => `
+              <div class="mission-item">
+                <div style="flex:1;">
+                  <div>${e.problem}</div>
+                  <div class="text-small text-muted">${e.correction ? 'Corrigé' : 'À revoir'}</div>
+                </div>
+                <span class="chip">${e.status}</span>
+              </div>
+            `).join('') : '<div class="text-muted">Aucune erreur enregistrée</div>'}
+          </div>
+          <button class="btn-primary" data-add-mistake>➕ Ajouter une erreur</button>
+        </div>
+      `;
+    }
+
+    // ----- ACHIEVEMENTS -----
+    function renderAchievements() {
+      return `
+        <div>
+          <h2 style="font-size:22px;margin-bottom:16px;">🏆 Achievements</h2>
+          <div class="card">
+            <div class="flex-between"><span>🐺 First Blood</span><span class="text-muted">${state.sessions.length > 0 ? '✅' : '🔒'}</span></div>
+            <div class="flex-between"><span>📚 7-Day Streak</span><span class="text-muted">🔒</span></div>
+          </div>
+        </div>
+      `;
+    }
+
+    // ----- MODAL -----
+    function renderModal() {
+      if (!state.modal) return '';
+      const m = state.modal;
+      if (m.type === 'task') {
+        return `
+          <div class="modal-overlay" data-close-modal>
+            <div class="modal-content">
+              <h3>➕ Ajouter une tâche</h3>
+              <div style="display:grid;gap:12px;">
+                <input id="task-text" placeholder="Que voulez-vous faire ?" />
+                <div class="flex gap-8">
+                  <select id="task-priority">
+                    <option value="Haute">Haute</option>
+                    <option value="Moyenne" selected>Moyenne</option>
+                    <option value="Basse">Basse</option>
+                  </select>
+                </div>
+                <div class="flex gap-8">
+                  <input type="date" id="task-date" value="${new Date().toISOString().slice(0,10)}" />
+                  <input type="time" id="task-time" value="${new Date().toTimeString().slice(0,5)}" />
+                </div>
+              </div>
+              <div class="modal-actions">
+                <button class="btn-outline" data-close-modal>Annuler</button>
+                <button class="btn-primary" data-save-task>Enregistrer</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+      if (m.type === 'session') {
+        return `
+          <div class="modal-overlay" data-close-modal>
+            <div class="modal-content">
+              <h3>📝 Enregistrer une session</h3>
+              <div style="display:grid;gap:12px;">
+                <select id="session-topic">
+                  <option value="">Sélectionner un chapitre</option>
+                  ${state.topics.map(t => `<option value="${t.id}" ${t.id===m.topicId?'selected':''}>${t.title}</option>`).join('')}
+                </select>
+                <select id="session-type">
+                  <option value="theory">Théorie</option>
+                  <option value="exercise">Exercice</option>
+                  <option value="revision">Révision</option>
+                  <option value="test">Test</option>
+                  <option value="project">Projet</option>
+                  <option value="other">Autre</option>
+                </select>
+                <div class="flex gap-8">
+                  <input type="number" id="session-duration" placeholder="Durée (min)" value="30" />
+                  <input type="date" id="session-date" value="${new Date().toISOString().slice(0,10)}" />
+                </div>
+                <textarea id="session-notes" placeholder="Notes..."></textarea>
+              </div>
+              <div class="modal-actions">
+                <button class="btn-outline" data-close-modal>Annuler</button>
+                <button class="btn-primary" data-save-session>Enregistrer</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+      if (m.type === 'mistake') {
+        return `
+          <div class="modal-overlay" data-close-modal>
+            <div class="modal-content">
+              <h3>❌ Enregistrer une erreur</h3>
+              <div style="display:grid;gap:12px;">
+                <input id="mistake-problem" placeholder="Question / exercice" />
+                <textarea id="mistake-detail" placeholder="Ce qui a été mal fait"></textarea>
+                <input id="mistake-correction" placeholder="Correction" />
+                <select id="mistake-cause">
+                  <option value="concept">Concept non compris</option>
+                  <option value="calculation">Calcul</option>
+                  <option value="method">Méthode</option>
+                  <option value="other">Autre</option>
+                </select>
+              </div>
+              <div class="modal-actions">
+                <button class="btn-outline" data-close-modal>Annuler</button>
+                <button class="btn-primary" data-save-mistake>Enregistrer</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+      return '';
+    }
+
+    // ---------- POMODORO CONTROLS ----------
+    function startPomodoro() {
+      if (pomodoro.isRunning) return;
+      pomodoro.isRunning = true;
+      if (pomodoro.remaining <= 0) {
+        pomodoro.remaining = pomodoro.isBreak ? pomodoro.breakTime * 60 : pomodoro.workTime * 60;
+      }
+      pomodoro.timerId = setInterval(() => {
+        pomodoro.remaining--;
+        if (pomodoro.remaining <= 0) {
+          clearInterval(pomodoro.timerId);
+          pomodoro.isRunning = false;
+          pomodoro.isBreak = !pomodoro.isBreak;
+          pomodoro.remaining = pomodoro.isBreak ? pomodoro.breakTime * 60 : pomodoro.workTime * 60;
+          if (navigator.vibrate) navigator.vibrate(200);
+          alert(pomodoro.isBreak ? '☕ Pause terminée ! Reprenez le travail.' : '⏰ Temps de travail terminé ! Faites une pause.');
+          render();
+        }
+        render();
+      }, 1000);
+      render();
+    }
+
+    function pausePomodoro() {
+      if (!pomodoro.isRunning) return;
+      clearInterval(pomodoro.timerId);
+      pomodoro.isRunning = false;
+      render();
+    }
+
+    function stopPomodoro() {
+      clearInterval(pomodoro.timerId);
+      pomodoro.isRunning = false;
+      pomodoro.isBreak = false;
+      pomodoro.remaining = pomodoro.workTime * 60;
+      render();
+    }
+
+    function resetPomodoro() {
+      clearInterval(pomodoro.timerId);
+      pomodoro.isRunning = false;
+      pomodoro.isBreak = false;
+      pomodoro.remaining = pomodoro.workTime * 60;
+      render();
+    }
+
+    function applyPomodoroSettings() {
+      if (pomodoro.isRunning) return;
+      const work = parseInt(document.getElementById('pomo-work').value);
+      const breakTime = parseInt(document.getElementById('pomo-break').value);
+      if (work > 0 && breakTime > 0) {
+        pomodoro.workTime = work;
+        pomodoro.breakTime = breakTime;
+        pomodoro.remaining = work * 60;
+        pomodoro.isBreak = false;
+        render();
+      }
+    }
+
+    // ---------- EVENTS ----------
+    function attachAppEvents() {
+      document.querySelectorAll('.bottom-nav button').forEach(btn => {
+        btn.addEventListener('click', () => { if (btn.dataset.route) navigate(btn.dataset.route); });
+      });
+      document.querySelectorAll('[data-route]').forEach(el => {
+        el.addEventListener('click', (e) => {
+          const route = el.dataset.route;
+          const subId = el.dataset.subjectId;
+          if (route === 'subject' && subId) navigate('subject', { subjectId: subId });
+          else if (route) navigate(route);
+        });
+      });
+      document.querySelectorAll('.subject-card[data-subject-id]').forEach(el => {
+        el.addEventListener('click', () => navigate('subject', { subjectId: el.dataset.subjectId }));
+      });
+      document.querySelectorAll('.topic-item[data-topic-id]').forEach(el => {
+        el.addEventListener('click', () => navigate('topic', { topicId: el.dataset.topicId }));
+      });
+
+      // ----- MASTER / TOPIC EVENTS -----
+      document.querySelectorAll('[data-topic-up]').forEach(el => {
+        el.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const tid = el.dataset.topicUp;
+          const p = getProgress(tid);
+          if (p.level < 4) {
+            p.level = p.level + 1;
+            p.score = computeMasteryScore(tid);
+            p.last_studied = new Date().toISOString();
+            state.progress[tid] = p;
+            saveState();
+            render();
+          }
+        });
+      });
+      document.querySelectorAll('[data-topic-down]').forEach(el => {
+        el.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const tid = el.dataset.topicDown;
+          const p = getProgress(tid);
+          if (p.level > 0) {
+            p.level = p.level - 1;
+            p.score = computeMasteryScore(tid);
+            state.progress[tid] = p;
+            saveState();
+            render();
+          }
+        });
+      });
+
+      // ----- PROGRAMMING EVENTS -----
+      document.querySelectorAll('[data-prog-up]').forEach(el => {
+        el.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const pid = el.dataset.progUp;
+          const p = state.programming[pid] || { level: 0, score: 0 };
+          if (p.level < 4) {
+            p.level = p.level + 1;
+            p.score = Math.min(p.level * 25, 100);
+            state.programming[pid] = p;
+            saveState();
+            render();
+          }
+        });
+      });
+      document.querySelectorAll('[data-prog-down]').forEach(el => {
+        el.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const pid = el.dataset.progDown;
+          const p = state.programming[pid] || { level: 0, score: 0 };
+          if (p.level > 0) {
+            p.level = p.level - 1;
+            p.score = Math.min(p.level * 25, 100);
+            state.programming[pid] = p;
+            saveState();
+            render();
+          }
+        });
+      });
+
+      // ----- TASKS EVENTS -----
+      document.querySelectorAll('[data-add-task]').forEach(el => {
+        el.addEventListener('click', () => {
+          state.modal = { type: 'task' };
+          render();
+        });
+      });
+      document.querySelectorAll('[data-save-task]').forEach(el => {
+        el.addEventListener('click', () => {
+          const text = document.getElementById('task-text')?.value;
+          const priority = document.getElementById('task-priority')?.value || 'Moyenne';
+          const date = document.getElementById('task-date')?.value || new Date().toISOString().slice(0,10);
+          const time = document.getElementById('task-time')?.value || '';
+          if (!text) { alert('Veuillez écrire une tâche'); return; }
+          state.tasks.push({
+            id: generateId(),
+            text,
+            priority,
+            date,
+            time,
+            isDone: false
+          });
+          state.modal = null;
+          saveState();
+          render();
+        });
+      });
+      document.querySelectorAll('[data-task-done]').forEach(el => {
+        el.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const tid = el.dataset.taskDone;
+          const task = state.tasks.find(t => t.id === tid);
+          if (task) {
+            task.isDone = true;
+            saveState();
+            render();
+          }
+        });
+      });
+      document.querySelectorAll('[data-task-delete]').forEach(el => {
+        el.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const tid = el.dataset.taskDelete;
+          if (confirm('Supprimer cette tâche ?')) {
+            state.tasks = state.tasks.filter(t => t.id !== tid);
+            saveState();
+            render();
+          }
+        });
+      });
+
+      // ----- POMODORO EVENTS -----
+      document.querySelectorAll('[data-pomo-start]').forEach(el => {
+        el.addEventListener('click', startPomodoro);
+      });
+      document.querySelectorAll('[data-pomo-pause]').forEach(el => {
+        el.addEventListener('click', pausePomodoro);
+      });
+      document.querySelectorAll('[data-pomo-stop]').forEach(el => {
+        el.addEventListener('click', stopPomodoro);
+      });
+      document.querySelectorAll('[data-pomo-reset]').forEach(el => {
+        el.addEventListener('click', resetPomodoro);
+      });
+      document.querySelectorAll('[data-pomo-apply]').forEach(el => {
+        el.addEventListener('click', applyPomodoroSettings);
+      });
+
+      document.querySelectorAll('[data-session-topic]').forEach(el => {
+        el.addEventListener('click', (e) => {
+          e.stopPropagation();
+          state.modal = { type: 'session', topicId: el.dataset.sessionTopic || null };
+          render();
+        });
+      });
+      document.querySelectorAll('[data-save-notes]').forEach(el => {
+        el.addEventListener('click', () => {
+          const tid = el.dataset.saveNotes;
+          const notesEl = document.getElementById('topic-notes');
+          if (notesEl) {
+            const p = getProgress(tid);
+            p.notes = notesEl.value;
+            state.progress[tid] = p;
+            saveState();
+            render();
+          }
+        });
+      });
+      document.querySelectorAll('[data-edit-planning]').forEach(el => {
+        el.addEventListener('click', () => { state.isEditingPlanning = true; render(); });
+      });
+      document.querySelectorAll('[data-save-planning]').forEach(el => {
+        el.addEventListener('click', () => {
+          const dayKeys = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'];
+          const newSchedule = {};
+          dayKeys.forEach(key => {
+            const input = document.getElementById(`planning-input-${key}`);
+            if (input) newSchedule[key] = input.value.trim();
+          });
+          state.customSchedule = newSchedule;
+          state.isEditingPlanning = false;
+          saveState();
+          render();
+        });
+      });
+      document.querySelectorAll('[data-cancel-planning]').forEach(el => {
+        el.addEventListener('click', () => { state.isEditingPlanning = false; render(); });
+      });
+      document.querySelectorAll('[data-reset-day]').forEach(el => {
+        el.addEventListener('click', (e) => {
+          const key = el.dataset.resetDay;
+          const input = document.getElementById(`planning-input-${key}`);
+          if (input) input.value = DEFAULT_SCHEDULE[key] || '';
+        });
+      });
+      document.querySelectorAll('[data-save-session]').forEach(el => {
+        el.addEventListener('click', () => {
+          const topicId = document.getElementById('session-topic')?.value;
+          const type = document.getElementById('session-type')?.value || 'other';
+          const duration = parseInt(document.getElementById('session-duration')?.value) || 0;
+          const date = document.getElementById('session-date')?.value || new Date().toISOString().slice(0,10);
+          const notes = document.getElementById('session-notes')?.value || '';
+          if (!topicId) { alert('Sélectionnez un chapitre'); return; }
+          const session = {
+            id: generateId(),
+            date, start: null, end: null, duration,
+            subject_id: state.topics.find(t=>t.id===topicId)?.subject_id || '',
+            topic_id: topicId, type, notes
+          };
+          state.sessions.push(session);
+          if (type === 'exercise' || type === 'test') {
+            const p = getProgress(topicId);
+            const oldScore = p.score || computeMasteryScore(topicId);
+            p.score = Math.min(oldScore + 5, 100);
+            if (p.level === 0 && p.score > 20) p.level = 1;
+            else if (p.level === 1 && p.score > 45) p.level = 2;
+            else if (p.level === 2 && p.score > 70) p.level = 3;
+            else if (p.level === 3 && p.score > 90) p.level = 4;
+            p.last_studied = new Date().toISOString();
+            state.progress[topicId] = p;
+          } else {
+            const p = getProgress(topicId);
+            p.last_studied = new Date().toISOString();
+            state.progress[topicId] = p;
+          }
+          state.modal = null;
+          saveState();
+          render();
+        });
+      });
+      document.querySelectorAll('[data-add-mistake]').forEach(el => {
+        el.addEventListener('click', () => { state.modal = { type: 'mistake' }; render(); });
+      });
+      document.querySelectorAll('[data-save-mistake]').forEach(el => {
+        el.addEventListener('click', () => {
+          const problem = document.getElementById('mistake-problem')?.value || '';
+          const detail = document.getElementById('mistake-detail')?.value || '';
+          const correction = document.getElementById('mistake-correction')?.value || '';
+          const cause = document.getElementById('mistake-cause')?.value || 'other';
+          if (!problem) { alert('Décrivez l\'erreur'); return; }
+          state.errors.push({
+            id: generateId(), problem, mistake: detail, correction, cause,
+            status: 'à revoir', confidence: 3, date: new Date().toISOString()
+          });
+          state.modal = null;
+          saveState();
+          render();
+        });
+      });
+      document.querySelectorAll('[data-close-modal]').forEach(el => {
+        el.addEventListener('click', () => { state.modal = null; render(); });
+      });
+      document.getElementById('btn-export')?.addEventListener('click', exportData);
+      document.getElementById('btn-import')?.addEventListener('click', importData);
+    }
+
+    // ---------- DATA PERSISTENCE ----------
+    async function saveState() {
+      const data = {
+        subjects: state.subjects,
+        topics: state.topics,
+        progress: state.progress,
+        sessions: state.sessions,
+        errors: state.errors,
+        programming: state.programming,
+        tasks: state.tasks,
+        settings: state.settings,
+        onboardingDone: state.onboardingDone,
+        customSchedule: state.customSchedule
+      };
+      await dbSet('appState', data);
+    }
+
+    async function loadState() {
+      try {
+        const data = await dbGet('appState');
+        if (data) {
+          state.subjects = data.subjects || MASTER_SUBJECTS;
+          state.topics = data.topics || TOPICS_SEED;
+          state.progress = data.progress || {};
+          state.sessions = data.sessions || [];
+          state.errors = data.errors || [];
+          state.programming = data.programming || {};
+          state.tasks = data.tasks || [];
+          state.settings = data.settings || { theme: 'dark' };
+          state.onboardingDone = data.onboardingDone || false;
+          state.customSchedule = data.customSchedule || {};
+        } else {
+          state.subjects = MASTER_SUBJECTS;
+          state.topics = TOPICS_SEED;
+          state.progress = {};
+          state.sessions = [];
+          state.errors = [];
+          state.programming = {};
+          state.tasks = [];
+          state.settings = { theme: 'dark' };
+          state.onboardingDone = false;
+          state.customSchedule = {};
+        }
+      } catch (e) {
+        console.warn('Erreur chargement state', e);
+      }
+    }
+
+    async function exportData() {
+      const data = {
+        version: '3.0',
+        exportedAt: new Date().toISOString(),
+        subjects: state.subjects,
+        topics: state.topics,
+        progress: state.progress,
+        sessions: state.sessions,
+        errors: state.errors,
+        programming: state.programming,
+        tasks: state.tasks,
+        settings: state.settings,
+        customSchedule: state.customSchedule
+      };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `whitewolf_backup_${new Date().toISOString().slice(0,10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    async function importData() {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'application/json';
+      input.onchange = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = async (ev) => {
+          try {
+            const data = JSON.parse(ev.target.result);
+            if (!data.subjects || !data.topics) { alert('Fichier invalide'); return; }
+            if (!confirm('Importer va remplacer toutes les données. Continuer ?')) return;
+            state.subjects = data.subjects;
+            state.topics = data.topics;
+            state.progress = data.progress || {};
+            state.sessions = data.sessions || [];
+            state.errors = data.errors || [];
+            state.programming = data.programming || {};
+            state.tasks = data.tasks || [];
+            state.settings = data.settings || { theme: 'dark' };
+            state.customSchedule = data.customSchedule || {};
+            await saveState();
+            render();
+            alert('Import terminé !');
+          } catch (err) { alert('Erreur d\'import : ' + err.message); }
+        };
+        reader.readAsText(file);
+      };
+      input.click();
+    }
+
+    // ---------- INIT ----------
+    async function init() {
+      await openDB();
+      await loadState();
+      render();
+    }
+
+    init();
+
+  })();
+</script>
+</body>
+</html>

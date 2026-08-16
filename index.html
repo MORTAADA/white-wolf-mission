@@ -17,6 +17,8 @@
       color: #e2e8f0;
       padding-bottom: 80px;
       min-height: 100vh;
+      display: flex;
+      justify-content: center; /* لتوسيط التطبيق في منتصف شاشة الكمبيوتر */
     }
     a, button, .clickable {
       cursor: pointer;
@@ -53,10 +55,19 @@
 
     /* ===== LAYOUT ===== */
     .app {
-      max-width: 820px;
-      margin: 0 auto;
+      width: 100%;
+      max-width: 780px; /* تم تحسين الحد الأقصى للعرض ليكون متناسقاً */
       padding: 16px 18px 90px;
     }
+
+    /* تعديل مهم للكمبيوتر: عند الشاشات الكبيرة، نزيد المسافات الجانبية قليلاً */
+    @media (min-width: 900px) {
+      .app {
+        padding: 24px 30px 90px;
+        max-width: 820px;
+      }
+    }
+
     .header {
       display: flex;
       justify-content: space-between;
@@ -288,6 +299,7 @@
     .pomodoro-container .timer-controls {
       display: flex;
       justify-content: center;
+      flex-wrap: wrap; /* لضمان ظهور الأزرار بشكل جيد في الشاشات الصغيرة */
       gap: 12px;
       margin: 12px 0 4px;
     }
@@ -301,22 +313,15 @@
     .pomodoro-container .timer-controls .btn-start.running { border-color: #e8cc6a; color: #e8cc6a; }
     .pomodoro-container .timer-controls .btn-stop { border-color: #e86a6a; color: #e86a6a; }
     .pomodoro-container .timer-controls .btn-reset { border-color: #6b7f9a; color: #6b7f9a; }
+    
+    /* تنسيق إعدادات البومودورو لتكون مرتبة بشكل جميل */
     .pomodoro-container .timer-settings {
       display: flex;
       justify-content: center;
-      gap: 10px;
-      margin-top: 10px;
-    }
-    .pomodoro-container .timer-settings select, 
-    .pomodoro-container .timer-settings input {
-      width: auto;
-      padding: 6px 10px;
-      font-size: 13px;
-      background: #0a0e14;
-      border: 1px solid #2a3442;
-      border-radius: 8px;
-      color: #e2e8f0;
-      text-align: center;
+      flex-wrap: wrap;
+      gap: 8px 15px;
+      margin-top: 12px;
+      align-items: center;
     }
     .pomodoro-container .timer-settings label {
       font-size: 13px;
@@ -324,6 +329,16 @@
       display: flex;
       align-items: center;
       gap: 6px;
+    }
+    .pomodoro-container .timer-settings input[type="number"] {
+      width: 50px;
+      padding: 4px 6px;
+      font-size: 14px;
+      background: #0a0e14;
+      border: 1px solid #2a3442;
+      border-radius: 6px;
+      color: #e2e8f0;
+      text-align: center;
     }
 
     /* ===== PROGRAMMING CATEGORIES ===== */
@@ -452,12 +467,12 @@
 
     /* ===== RESPONSIVE ===== */
     @media (min-width: 600px) {
-      .app { padding: 24px 30px 90px; }
+      .app { padding: 20px 24px 90px; }
       .subject-grid { grid-template-columns: 1fr 1fr 1fr; }
       .bottom-nav button { font-size: 13px; gap: 4px; }
     }
     @media (min-width: 900px) {
-      .app { max-width: 1000px; }
+      .app { max-width: 860px; padding: 30px 40px 90px; }
       .subject-grid { grid-template-columns: 1fr 1fr 1fr; }
       .bottom-nav { display: none; }
       body { padding-bottom: 0; }
@@ -476,6 +491,11 @@
     .text-small { font-size: 13px; }
     .text-bold { font-weight: 600; }
     .hidden { display: none !important; }
+
+    /* ===== ONBOARDING ===== */
+    .onboarding-step { padding: 16px 0; }
+    .onboarding-step h2 { font-size: 24px; margin-bottom: 12px; }
+    .onboarding-step p { color: #8ba2c0; line-height: 1.6; }
   </style>
 </head>
 <body>
@@ -484,7 +504,7 @@
 
 <script>
   // ============================================================
-  //  MISSION OF THE WHITE WOLF — VERSION FINALE (ONBOARDING PRO)
+  //  MISSION OF THE WHITE WOLF — VERSION FINALE RESPONSIVE
   // ============================================================
 
   (function() {
@@ -725,7 +745,7 @@
       attachAppEvents();
     }
 
-    // ---------- ONBOARDING (تصميم جديد احترافي بدون حواف) ----------
+    // ---------- ONBOARDING ----------
     function renderOnboarding() {
       return `
         <div style="
@@ -741,7 +761,6 @@
           z-index: 999;
         ">
           
-          <!-- الشعار مع تأثير نبض -->
           <div style="
             font-size: 80px; 
             margin-bottom: 16px; 
@@ -751,7 +770,6 @@
             🐺
           </div>
 
-          <!-- العنوان الرئيسي -->
           <h1 style="
             font-size: 32px; 
             font-weight: 700; 
@@ -762,7 +780,6 @@
             Mission of the White Wolf
           </h1>
 
-          <!-- الجملة التحفيزية -->
           <p style="
             font-size: 16px; 
             color: #8ba2c0; 
@@ -773,7 +790,6 @@
             Study → Track → Analyze → Correct → Master
           </p>
 
-          <!-- معلومات الماستر (بدون بطاقات) -->
           <div style="margin-bottom: 40px; width: 100%; max-width: 400px;">
             <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 8px;">
               <span style="font-size: 24px;">📘</span>
@@ -785,7 +801,6 @@
             </p>
           </div>
 
-          <!-- زر البدء (أكبر وبدون حواف) -->
           <button id="onboard-finish" style="
             background: #2a3f60; 
             color: #fff; 
@@ -807,12 +822,10 @@
             🐺 Commencer ma mission →
           </button>
 
-          <!-- شريط التقدم البسيط -->
           <div style="margin-top: 24px; font-size: 12px; color: #4b5a72; letter-spacing: 1px;">
             Étape 1 / 1
           </div>
 
-          <!-- إضافة تأثيرات الأنيميشن بواسطة CSS -->
           <style>
             @keyframes pulse {
               0% { transform: scale(0.98); opacity: 0.7; }
@@ -882,7 +895,7 @@
       }
     }
 
-    // ----- DASHBOARD (مع بومودورو) -----
+    // ----- DASHBOARD -----
     function renderDashboard() {
       const totalTopics = state.topics.length;
       const progressed = state.topics.filter(t => getProgress(t.id).level > 0).length;
@@ -936,12 +949,12 @@
               <div class="timer-settings">
                 <label>
                   🎯 Travail:
-                  <input type="number" id="pomo-work" value="${pomodoro.workTime}" min="1" max="120" style="width:50px;" ${isRunning ? 'disabled' : ''} />
+                  <input type="number" id="pomo-work" value="${pomodoro.workTime}" min="1" max="120" ${isRunning ? 'disabled' : ''} />
                   min
                 </label>
                 <label>
                   ☕ Pause:
-                  <input type="number" id="pomo-break" value="${pomodoro.breakTime}" min="1" max="30" style="width:50px;" ${isRunning ? 'disabled' : ''} />
+                  <input type="number" id="pomo-break" value="${pomodoro.breakTime}" min="1" max="30" ${isRunning ? 'disabled' : ''} />
                   min
                 </label>
                 <button class="btn-small btn-outline" data-pomo-apply>Appliquer</button>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes" />
-  <title>Mission of the White Wolf</title>
+  <title>White Wolf Scholar</title>
   <style>
     /* ===== RESET & BASE ===== */
     * {
@@ -224,6 +224,7 @@
     .schedule-item { display: flex; justify-content: space-between; padding: 4px 0; font-size: 14px; border-bottom: 1px solid #111a24; }
     .schedule-item .subj { color: #e2e8f0; }
     .schedule-item .time { color: #6b7f9a; }
+    .schedule-item .room { color: #8ba2c0; font-size: 12px; }
     .schedule-item .type { font-size: 11px; padding: 2px 8px; border-radius: 10px; background: #1a2430; color: #8ba2c0; }
     .schedule-item .type.Cours { background: #1f2a4a; color: #8fb3e6; }
     .schedule-item .type.TD { background: #2a3a2a; color: #8ba25a; }
@@ -378,7 +379,7 @@
 
 <script>
   // ============================================================
-  //  MISSION OF THE WHITE WOLF — V14 (MODAL POSITION FIXED)
+  //  WHITE WOLF SCHOLAR — V15 (WITH ROOMS + NEW NAME)
   // ============================================================
 
   (function() {
@@ -478,23 +479,32 @@
       { id: 'proj3', domain: 'Outils & Projets', icon: '🔧', title: 'Projet : Mini jeu en Python' }
     ];
 
-    // ---------- EMPLOI DU TEMPS ----------
+    // ---------- EMPLOI DU TEMPS (AVEC SALLES) ----------
     const COURSE_SCHEDULE = [
-      { day: 'lundi', start: '08:30', end: '10:00', subject: 'Analyse des solides', type: 'Cours' },
-      { day: 'lundi', start: '10:15', end: '11:45', subject: 'Analyse des solides', type: 'TD' },
-      { day: 'lundi', start: '14:00', end: '15:30', subject: 'Séparation et analyse chromato.', type: 'Cours' },
-      { day: 'lundi', start: '15:45', end: '17:15', subject: 'Séparation et analyse chromato.', type: 'TD' },
-      { day: 'mardi', start: '08:30', end: '10:00', subject: 'Chimie Analytique', type: 'TD' },
-      { day: 'mardi', start: '10:15', end: '11:45', subject: 'Chimie Analytique', type: 'Cours' },
-      { day: 'mardi', start: '13:15', end: '14:45', subject: 'Spectroscopie atomique', type: 'Cours' },
-      { day: 'mercredi', start: '08:30', end: '11:30', subject: 'TP', type: 'TP' },
-      { day: 'mercredi', start: '13:30', end: '15:30', subject: 'Hygiène sécurité et environnement', type: 'Cours' },
-      { day: 'mercredi', start: '15:45', end: '17:00', subject: 'Efficacité énergétique', type: 'Cours' },
-      { day: 'jeudi', start: '08:30', end: '11:30', subject: 'TP', type: 'TP' },
-      { day: 'jeudi', start: '14:00', end: '17:00', subject: 'TP', type: 'TP' },
-      { day: 'vendredi', start: '08:30', end: '10:00', subject: 'Normes et qualité', type: 'Cours' },
-      { day: 'vendredi', start: '10:15', end: '11:45', subject: 'Spectroscopie moléculaire', type: 'Cours' },
-      { day: 'vendredi', start: '13:45', end: '15:15', subject: 'Spectroscopie moléculaire', type: 'TD' },
+      // Lundi (S.C.CHIM pour toutes les cours)
+      { day: 'lundi', start: '08:30', end: '10:00', subject: 'Analyse des solides', type: 'Cours', room: 'S.C.CHIM' },
+      { day: 'lundi', start: '10:15', end: '11:45', subject: 'Analyse des solides', type: 'TD', room: 'S.C.CHIM' },
+      { day: 'lundi', start: '14:00', end: '15:30', subject: 'Séparation et analyse chromato.', type: 'Cours', room: 'S.C.CHIM' },
+      { day: 'lundi', start: '15:45', end: '17:15', subject: 'Séparation et analyse chromato.', type: 'TD', room: 'S.C.CHIM' },
+
+      // Mardi
+      { day: 'mardi', start: '08:30', end: '10:00', subject: 'Chimie Analytique', type: 'TD', room: 'S.C.CHIM' },
+      { day: 'mardi', start: '10:15', end: '11:45', subject: 'Chimie Analytique', type: 'Cours', room: 'S.C.CHIM' },
+      { day: 'mardi', start: '13:15', end: '14:45', subject: 'Spectroscopie atomique', type: 'Cours', room: 'P21' },
+
+      // Mercredi
+      { day: 'mercredi', start: '08:30', end: '11:30', subject: 'TP', type: 'TP', room: 'Labo de chimie' },
+      { day: 'mercredi', start: '13:30', end: '15:30', subject: 'Hygiène sécurité et environnement', type: 'Cours', room: 'ME205' },
+      { day: 'mercredi', start: '15:45', end: '17:00', subject: 'Efficacité énergétique', type: 'Cours', room: 'ME205' },
+
+      // Jeudi
+      { day: 'jeudi', start: '08:30', end: '11:30', subject: 'TP', type: 'TP', room: 'Labo de chimie' },
+      { day: 'jeudi', start: '14:00', end: '17:00', subject: 'TP', type: 'TP', room: 'Labo de chimie' },
+
+      // Vendredi
+      { day: 'vendredi', start: '08:30', end: '10:00', subject: 'Normes et qualité', type: 'Cours', room: 'S.Bib.CHIM' },
+      { day: 'vendredi', start: '10:15', end: '11:45', subject: 'Spectroscopie moléculaire', type: 'Cours', room: 'S.Bib.CHIM' },
+      { day: 'vendredi', start: '13:45', end: '15:15', subject: 'Spectroscopie moléculaire', type: 'TD', room: 'S.Bib.CHIM' },
     ];
 
     // ---------- DEFAULT PLANNING ----------
@@ -739,7 +749,7 @@
           const key = `${c.subject}_${c.start}`;
           if (state.lastNotifiedClass !== key) {
             state.lastNotifiedClass = key;
-            sendNotification(`⏰ Cours dans 10 min`, `${c.subject} (${c.type}) à ${c.start}`);
+            sendNotification(`⏰ Cours dans 10 min`, `${c.subject} (${c.type}) à ${c.start} • ${c.room}`);
           }
         }
       });
@@ -810,7 +820,7 @@
           padding: 30px; text-align: center; z-index: 999;
         ">
           <div style="font-size: 80px; margin-bottom: 16px; animation: pulse 2.5s ease-in-out infinite; display: inline-block;">🐺</div>
-          <h1 style="font-size: 32px; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 10px; color: #fff;">Mission of the White Wolf</h1>
+          <h1 style="font-size: 32px; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 10px; color: #fff;">White Wolf Scholar</h1>
           <p style="font-size: 16px; color: #8ba2c0; margin-bottom: 30px; font-weight: 300; letter-spacing: 0.8px;">Study → Track → Analyze → Correct → Master</p>
           <div style="margin-bottom: 40px; width: 100%; max-width: 400px;">
             <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 8px;">
@@ -849,7 +859,7 @@
       return `
         <div class="app">
           <div class="header">
-            <h1><span class="wolf-icon">🐺</span> White Wolf <span>v14</span></h1>
+            <h1><span class="wolf-icon">🐺</span> White Wolf Scholar <span>v15</span></h1>
           </div>
           ${renderContent(active)}
           <nav class="bottom-nav">
@@ -879,7 +889,7 @@
       }
     }
 
-    // ----- DASHBOARD -----
+    // ----- DASHBOARD (WITH ROOM DISPLAY) -----
     function renderDashboard() {
       const totalTopics = state.topics.length;
       const progressed = state.topics.filter(t => getProgress(t.id).level > 0).length;
@@ -908,7 +918,7 @@
                   <div class="status-icon">🔴</div>
                   <div>
                     <div class="status-text">En cours : ${currentClass.subject}</div>
-                    <div class="status-sub">${currentClass.start} - ${currentClass.end} • ${currentClass.type}</div>
+                    <div class="status-sub">${currentClass.start} - ${currentClass.end} • ${currentClass.room || currentClass.type === 'TP' ? 'Labo de chimie' : ''}</div>
                   </div>
                 </div>
               ` : ''}
@@ -918,7 +928,7 @@
                   <div class="status-icon">⏳</div>
                   <div>
                     <div class="status-text">Prochain : ${nextClass.subject}</div>
-                    <div class="status-sub">À ${nextClass.start} • ${nextClass.type}</div>
+                    <div class="status-sub">À ${nextClass.start} • ${nextClass.room || (nextClass.type === 'TP' ? 'Labo de chimie' : '')}</div>
                   </div>
                 </div>
               ` : `
@@ -1344,7 +1354,7 @@
       `;
     }
 
-    // ----- EMPLOI DU TEMPS -----
+    // ----- EMPLOI DU TEMPS (AVEC SALLES) -----
     function renderEmploi() {
       const days = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
       const dayKeys = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'];
@@ -1369,6 +1379,7 @@
                     <span class="subj">${c.subject}</span>
                     <div style="display:flex;align-items:center;gap:8px;">
                       <span class="time">${c.start} - ${c.end}</span>
+                      <span class="room">• ${c.room || 'Salle inconnue'}</span>
                       <span class="type ${c.type}">${c.type}</span>
                     </div>
                   </div>

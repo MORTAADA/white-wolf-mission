@@ -18,7 +18,7 @@
       padding-bottom: 80px;
       min-height: 100vh;
       display: flex;
-      justify-content: center; /* لتوسيط التطبيق في منتصف شاشة الكمبيوتر */
+      justify-content: center;
     }
     a, button, .clickable {
       cursor: pointer;
@@ -56,16 +56,14 @@
     /* ===== LAYOUT ===== */
     .app {
       width: 100%;
-      max-width: 780px; /* تم تحسين الحد الأقصى للعرض ليكون متناسقاً */
+      max-width: 780px;
       padding: 16px 18px 90px;
     }
 
-    /* تعديل مهم للكمبيوتر: عند الشاشات الكبيرة، نزيد المسافات الجانبية قليلاً */
     @media (min-width: 900px) {
-      .app {
-        padding: 24px 30px 90px;
-        max-width: 820px;
-      }
+      .app { padding: 24px 30px 90px; max-width: 860px; }
+      .bottom-nav { display: none; }
+      body { padding-bottom: 0; }
     }
 
     .header {
@@ -126,14 +124,8 @@
       align-items: center;
       gap: 3px;
     }
-    .bottom-nav button.active {
-      color: #8fb3e6;
-      font-weight: 600;
-    }
-    .bottom-nav button .nav-icon {
-      font-size: 24px;
-      line-height: 1;
-    }
+    .bottom-nav button.active { color: #8fb3e6; font-weight: 600; }
+    .bottom-nav button .nav-icon { font-size: 24px; line-height: 1; }
 
     /* ===== CARDS ===== */
     .card {
@@ -164,306 +156,111 @@
 
     /* ===== STATUS COLORS ===== */
     .status-0 { color: #5a6f86; }
-    .status-1 { color: #e89c6a; }   /* orange */
-    .status-2 { color: #e8cc6a; }   /* jaune */
-    .status-3 { color: #6a9ce8; }   /* bleu */
-    .status-4 { color: #6ae8a5; }   /* vert */
+    .status-1 { color: #e89c6a; }
+    .status-2 { color: #e8cc6a; }
+    .status-3 { color: #6a9ce8; }
+    .status-4 { color: #6ae8a5; }
 
     /* ===== PROGRESS BAR ===== */
-    .progress-bar {
-      height: 6px;
-      background: #1f2a3a;
-      border-radius: 20px;
-      overflow: hidden;
-      margin: 8px 0;
-    }
-    .progress-bar .fill {
-      height: 100%;
-      border-radius: 20px;
-      transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      background: #4b7bec;
-    }
+    .progress-bar { height: 6px; background: #1f2a3a; border-radius: 20px; overflow: hidden; margin: 8px 0; }
+    .progress-bar .fill { height: 100%; border-radius: 20px; transition: width 0.4s; background: #4b7bec; }
     .progress-bar .fill.weak { background: #e86a6a; }
     .progress-bar .fill.medium { background: #e8cc6a; }
     .progress-bar .fill.strong { background: #6ae8a5; }
 
     /* ===== SUBJECT GRID ===== */
-    .subject-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-    .subject-card {
-      background: #0e161f;
-      border-radius: 16px;
-      padding: 16px 14px;
-      border-left: 4px solid #2a3a4a;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      border: 1px solid #1a2430;
-    }
+    .subject-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .subject-card { background: #0e161f; border-radius: 16px; padding: 16px 14px; border-left: 4px solid #2a3a4a; cursor: pointer; transition: all 0.2s ease; border: 1px solid #1a2430; }
     .subject-card:active { background: #182230; transform: scale(0.98); }
-    .subject-card h4 {
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 6px;
-      line-height: 1.2;
-      color: #e2e8f0;
-    }
-    .subject-card .sub-meta {
-      font-size: 12px;
-      color: #6b7f9a;
-      display: flex;
-      justify-content: space-between;
-    }
+    .subject-card h4 { font-size: 14px; font-weight: 600; margin-bottom: 6px; line-height: 1.2; color: #e2e8f0; }
+    .subject-card .sub-meta { font-size: 12px; color: #6b7f9a; display: flex; justify-content: space-between; }
 
     /* ===== TOPIC LIST ===== */
-    .topic-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 8px 0;
-      border-bottom: 1px solid #16202c;
-    }
+    .topic-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #16202c; }
     .topic-item:last-child { border-bottom: 0; }
-    .topic-item .left {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-    .topic-item .left .name {
-      font-size: 15px;
-      font-weight: 500;
-    }
-    .topic-item .left .sub {
-      font-size: 12px;
-      color: #6b7f9a;
-    }
-    .topic-item .right {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+    .topic-item .left { display: flex; flex-direction: column; gap: 2px; }
+    .topic-item .left .name { font-size: 15px; font-weight: 500; }
+    .topic-item .left .sub { font-size: 12px; color: #6b7f9a; }
+    .topic-item .right { display: flex; align-items: center; gap: 8px; }
 
     /* ===== TASK ITEM ===== */
-    .task-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 0;
-      border-bottom: 1px solid #16202c;
-    }
+    .task-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #16202c; }
     .task-item:last-child { border-bottom: 0; }
-    .task-item .task-left {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-    .task-item .task-left .task-text {
-      font-size: 15px;
-      font-weight: 500;
-    }
-    .task-item .task-left .task-meta {
-      font-size: 12px;
-      color: #6b7f9a;
-    }
-    .task-item .task-right {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .task-item .task-priority {
-      font-size: 11px;
-      padding: 2px 10px;
-      border-radius: 20px;
-      font-weight: 500;
-    }
+    .task-item .task-left { display: flex; flex-direction: column; gap: 2px; }
+    .task-item .task-left .task-text { font-size: 15px; font-weight: 500; }
+    .task-item .task-left .task-meta { font-size: 12px; color: #6b7f9a; }
+    .task-item .task-right { display: flex; align-items: center; gap: 8px; }
+    .task-item .task-priority { font-size: 11px; padding: 2px 10px; border-radius: 20px; font-weight: 500; }
     .task-priority.Haute { background: #3d1f1f; color: #e86a6a; }
     .task-priority.Moyenne { background: #3d351f; color: #e8cc6a; }
     .task-priority.Basse { background: #1f2a3a; color: #8ba2c0; }
     .task-done { text-decoration: line-through; opacity: 0.6; }
 
+    /* ===== EXAM ITEM ===== */
+    .exam-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #16202c; }
+    .exam-item:last-child { border-bottom: 0; }
+    .exam-item .exam-left { display: flex; flex-direction: column; gap: 2px; }
+    .exam-item .exam-left .exam-title { font-size: 15px; font-weight: 500; }
+    .exam-item .exam-left .exam-date { font-size: 12px; color: #6b7f9a; }
+    .exam-item .exam-right { display: flex; align-items: center; gap: 8px; }
+    .exam-item .exam-badge { font-size: 11px; padding: 2px 10px; border-radius: 20px; background: #1f2a3a; color: #e8cc6a; }
+
     /* ===== POMODORO ===== */
-    .pomodoro-container {
-      text-align: center;
-      padding: 10px 0;
-    }
-    .pomodoro-container .timer-display {
-      font-size: 48px;
-      font-weight: 700;
-      font-variant-numeric: tabular-nums;
-      letter-spacing: 2px;
-      margin: 8px 0;
-      color: #c8d6e5;
-    }
-    .pomodoro-container .timer-controls {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap; /* لضمان ظهور الأزرار بشكل جيد في الشاشات الصغيرة */
-      gap: 12px;
-      margin: 12px 0 4px;
-    }
-    .pomodoro-container .timer-controls button {
-      padding: 8px 18px;
-      font-weight: 500;
-      border: 1px solid #2a3442;
-      border-radius: 10px;
-    }
+    .pomodoro-container { text-align: center; padding: 10px 0; }
+    .pomodoro-container .timer-display { font-size: 48px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: 2px; margin: 8px 0; color: #c8d6e5; }
+    .pomodoro-container .timer-controls { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; margin: 12px 0 4px; }
+    .pomodoro-container .timer-controls button { padding: 8px 18px; font-weight: 500; border: 1px solid #2a3442; border-radius: 10px; }
     .pomodoro-container .timer-controls .btn-start { border-color: #4b7bec; color: #8fb3e6; }
     .pomodoro-container .timer-controls .btn-start.running { border-color: #e8cc6a; color: #e8cc6a; }
     .pomodoro-container .timer-controls .btn-stop { border-color: #e86a6a; color: #e86a6a; }
     .pomodoro-container .timer-controls .btn-reset { border-color: #6b7f9a; color: #6b7f9a; }
-    
-    /* تنسيق إعدادات البومودورو لتكون مرتبة بشكل جميل */
-    .pomodoro-container .timer-settings {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 8px 15px;
-      margin-top: 12px;
-      align-items: center;
-    }
-    .pomodoro-container .timer-settings label {
-      font-size: 13px;
-      color: #6b7f9a;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .pomodoro-container .timer-settings input[type="number"] {
-      width: 50px;
-      padding: 4px 6px;
-      font-size: 14px;
-      background: #0a0e14;
-      border: 1px solid #2a3442;
-      border-radius: 6px;
-      color: #e2e8f0;
-      text-align: center;
-    }
+    .pomodoro-container .timer-settings { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px 15px; margin-top: 12px; align-items: center; }
+    .pomodoro-container .timer-settings label { font-size: 13px; color: #6b7f9a; display: flex; align-items: center; gap: 6px; }
+    .pomodoro-container .timer-settings input[type="number"] { width: 50px; padding: 4px 6px; font-size: 14px; background: #0a0e14; border: 1px solid #2a3442; border-radius: 6px; color: #e2e8f0; text-align: center; }
+
+    /* ===== EMPLOI DU TEMPS ===== */
+    .schedule-day { margin-bottom: 12px; }
+    .schedule-day h4 { color: #c8d6e5; margin-bottom: 6px; border-bottom: 1px solid #1a2430; padding-bottom: 4px; }
+    .schedule-item { display: flex; justify-content: space-between; padding: 4px 0; font-size: 14px; border-bottom: 1px solid #111a24; }
+    .schedule-item .subj { color: #e2e8f0; }
+    .schedule-item .time { color: #6b7f9a; }
+    .schedule-item .type { font-size: 11px; padding: 2px 8px; border-radius: 10px; background: #1a2430; color: #8ba2c0; }
+    .schedule-item .type.Cours { background: #1f2a4a; color: #8fb3e6; }
+    .schedule-item .type.TD { background: #2a3a2a; color: #8ba25a; }
+    .schedule-item .type.TP { background: #3a2a3a; color: #c08ae6; }
 
     /* ===== PROGRAMMING CATEGORIES ===== */
-    .prog-category {
-      background: #0e161f;
-      border-radius: 16px;
-      padding: 12px 16px;
-      margin-bottom: 14px;
-      border: 1px solid #1a2430;
-    }
-    .prog-category .cat-header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-weight: 600;
-      font-size: 16px;
-      color: #c8d6e5;
-      margin-bottom: 6px;
-    }
+    .prog-category { background: #0e161f; border-radius: 16px; padding: 12px 16px; margin-bottom: 14px; border: 1px solid #1a2430; }
+    .prog-category .cat-header { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 16px; color: #c8d6e5; margin-bottom: 6px; }
     .prog-category .cat-header .cat-icon { font-size: 20px; }
-    .prog-category .cat-header .cat-count {
-      margin-left: auto;
-      font-size: 12px;
-      color: #6b7f9a;
-      background: #1a2430;
-      padding: 2px 10px;
-      border-radius: 20px;
-    }
+    .prog-category .cat-header .cat-count { margin-left: auto; font-size: 12px; color: #6b7f9a; background: #1a2430; padding: 2px 10px; border-radius: 20px; }
 
     /* ===== BUTTONS ===== */
-    .btn-primary {
-      background: #2a3f60;
-      color: #e2e8f0;
-      padding: 10px 20px;
-      border-radius: 12px;
-      font-weight: 500;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      border: 1px solid #3a557a;
-    }
+    .btn-primary { background: #2a3f60; color: #e2e8f0; padding: 10px 20px; border-radius: 12px; font-weight: 500; display: inline-flex; align-items: center; gap: 8px; border: 1px solid #3a557a; }
     .btn-primary:active { background: #1f3350; }
-    .btn-outline {
-      border: 1px solid #2a3442;
-      padding: 6px 14px;
-      border-radius: 10px;
-      font-size: 13px;
-      color: #8ba2c0;
-    }
+    .btn-outline { border: 1px solid #2a3442; padding: 6px 14px; border-radius: 10px; font-size: 13px; color: #8ba2c0; }
     .btn-outline:active { background: #1a2430; }
     .btn-small { padding: 4px 12px; font-size: 13px; border-radius: 8px; }
+    .btn-ignore { color: #e86a6a; border-color: #3d1f1f; }
+    .btn-ignore:active { background: #1f0f0f; }
 
     /* ===== MODAL ===== */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.8);
-      backdrop-filter: blur(4px);
-      display: flex;
-      align-items: flex-end;
-      justify-content: center;
-      z-index: 200;
-      padding: 20px;
-    }
-    .modal-content {
-      background: #111a24;
-      border-radius: 24px 24px 20px 20px;
-      max-width: 500px;
-      width: 100%;
-      max-height: 90vh;
-      overflow-y: auto;
-      padding: 24px 20px;
-      border: 1px solid #1d2735;
-    }
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(4px); display: flex; align-items: flex-end; justify-content: center; z-index: 200; padding: 20px; }
+    .modal-content { background: #111a24; border-radius: 24px 24px 20px 20px; max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 24px 20px; border: 1px solid #1d2735; }
     .modal-content h3 { font-size: 20px; margin-bottom: 16px; }
-    .modal-actions {
-      display: flex;
-      gap: 10px;
-      justify-content: flex-end;
-      margin-top: 20px;
-    }
+    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
 
-    /* ===== STATS / MISC ===== */
-    .stat-row {
-      display: flex;
-      justify-content: space-between;
-      padding: 8px 0;
-      font-size: 14px;
-      border-bottom: 1px solid #16202c;
-    }
+    /* ===== STATS ===== */
+    .stat-row { display: flex; justify-content: space-between; padding: 8px 0; font-size: 14px; border-bottom: 1px solid #16202c; }
     .stat-row .label { color: #6b7f9a; }
     .stat-row .value { font-weight: 500; }
-    .chip {
-      display: inline-block;
-      background: #1a2430;
-      padding: 3px 12px;
-      border-radius: 30px;
-      font-size: 12px;
-      color: #8ba2c0;
-    }
+
+    .chip { display: inline-block; background: #1a2430; padding: 3px 12px; border-radius: 30px; font-size: 12px; color: #8ba2c0; }
 
     /* ===== PLANNING EDIT ===== */
-    .planning-day-edit {
-      background: #0e161f;
-      border-radius: 12px;
-      padding: 14px;
-      margin-bottom: 12px;
-      border: 1px solid #1a2430;
-    }
-    .planning-day-edit .day-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-weight: 600;
-      margin-bottom: 8px;
-    }
-    .planning-day-edit input {
-      background: #0a0e14;
-      border: 1px solid #1a2430;
-      padding: 8px 12px;
-      border-radius: 8px;
-      color: #e2e8f0;
-      width: 100%;
-      font-size: 14px;
-    }
+    .planning-day-edit { background: #0e161f; border-radius: 12px; padding: 14px; margin-bottom: 12px; border: 1px solid #1a2430; }
+    .planning-day-edit .day-header { display: flex; justify-content: space-between; align-items: center; font-weight: 600; margin-bottom: 8px; }
+    .planning-day-edit input { background: #0a0e14; border: 1px solid #1a2430; padding: 8px 12px; border-radius: 8px; color: #e2e8f0; width: 100%; font-size: 14px; }
 
     /* ===== RESPONSIVE ===== */
     @media (min-width: 600px) {
@@ -496,6 +293,52 @@
     .onboarding-step { padding: 16px 0; }
     .onboarding-step h2 { font-size: 24px; margin-bottom: 12px; }
     .onboarding-step p { color: #8ba2c0; line-height: 1.6; }
+
+    /* ===== SCHEDULE CARD ===== */
+    .schedule-status-container { display: flex; flex-direction: column; gap: 6px; }
+    .schedule-status-item { display: flex; align-items: center; gap: 10px; padding: 6px 8px; border-radius: 8px; background: #0e161f; border: 1px solid #1a2430; }
+    .schedule-status-item .status-icon { font-size: 20px; }
+    .schedule-status-item .status-text { font-size: 14px; font-weight: 500; }
+    .schedule-status-item .status-sub { font-size: 12px; color: #6b7f9a; }
+
+    /* ===== SMART REVISION (COLLAPSIBLE) ===== */
+    .revision-group {
+      background: #0e161f;
+      border-radius: 12px;
+      margin-bottom: 10px;
+      border: 1px solid #1a2430;
+      overflow: hidden;
+    }
+    .revision-group-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 14px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .revision-group-header:active { background: #182230; }
+    .revision-group-header .group-title { font-weight: 600; font-size: 15px; }
+    .revision-group-header .group-meta { font-size: 12px; color: #6b7f9a; }
+    .revision-group-body {
+      padding: 0 14px 12px 14px;
+      display: none;
+      border-top: 1px solid #1a2430;
+    }
+    .revision-group-body.open { display: block; }
+    .revision-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid #111a24;
+    }
+    .revision-item:last-child { border-bottom: 0; }
+    .revision-item .left { display: flex; align-items: center; gap: 8px; }
+    .revision-item .left .priority-icon { font-size: 16px; }
+    .revision-item .left .name { font-size: 14px; }
+    .revision-item .left .sub { font-size: 12px; color: #6b7f9a; }
+    .revision-item .right { display: flex; gap: 6px; }
   </style>
 </head>
 <body>
@@ -504,7 +347,7 @@
 
 <script>
   // ============================================================
-  //  MISSION OF THE WHITE WOLF — VERSION FINALE RESPONSIVE
+  //  MISSION OF THE WHITE WOLF — V10 (EXAMS WITH TIME)
   // ============================================================
 
   (function() {
@@ -604,6 +447,25 @@
       { id: 'proj3', domain: 'Outils & Projets', icon: '🔧', title: 'Projet : Mini jeu en Python' }
     ];
 
+    // ---------- EMPLOI DU TEMPS ----------
+    const COURSE_SCHEDULE = [
+      { day: 'lundi', start: '08:30', end: '10:00', subject: 'Analyse des solides', type: 'Cours' },
+      { day: 'lundi', start: '10:15', end: '11:45', subject: 'Analyse des solides', type: 'TD' },
+      { day: 'lundi', start: '14:00', end: '15:30', subject: 'Séparation et analyse chromato.', type: 'Cours' },
+      { day: 'lundi', start: '15:45', end: '17:15', subject: 'Séparation et analyse chromato.', type: 'TD' },
+      { day: 'mardi', start: '08:30', end: '10:00', subject: 'Chimie Analytique', type: 'TD' },
+      { day: 'mardi', start: '10:15', end: '11:45', subject: 'Chimie Analytique', type: 'Cours' },
+      { day: 'mardi', start: '13:15', end: '14:45', subject: 'Spectroscopie atomique', type: 'Cours' },
+      { day: 'mercredi', start: '08:30', end: '11:30', subject: 'TP', type: 'TP' },
+      { day: 'mercredi', start: '13:30', end: '15:30', subject: 'Hygiène sécurité et environnement', type: 'Cours' },
+      { day: 'mercredi', start: '15:45', end: '17:00', subject: 'Efficacité énergétique', type: 'Cours' },
+      { day: 'jeudi', start: '08:30', end: '11:30', subject: 'TP', type: 'TP' },
+      { day: 'jeudi', start: '14:00', end: '17:00', subject: 'TP', type: 'TP' },
+      { day: 'vendredi', start: '08:30', end: '10:00', subject: 'Normes et qualité', type: 'Cours' },
+      { day: 'vendredi', start: '10:15', end: '11:45', subject: 'Spectroscopie moléculaire', type: 'Cours' },
+      { day: 'vendredi', start: '13:45', end: '15:15', subject: 'Spectroscopie moléculaire', type: 'TD' },
+    ];
+
     // ---------- DEFAULT PLANNING ----------
     const DEFAULT_SCHEDULE = {
       lundi: '📚 Chimie analytique + Spectroscopie moléculaire + Python',
@@ -666,18 +528,23 @@
       errors: [],
       programming: {},
       tasks: [],
+      exams: [],
+      ignoredTopics: {},
       settings: { theme: 'dark' },
       onboardingDone: false,
       customSchedule: {},
       isEditingPlanning: false,
       modal: null,
+      lastNotifiedClass: '',
+      lastNotifiedExam: '',
+      lastNotifiedExamHour: '',
     };
 
     // ---------- POMODORO STATE ----------
     let pomodoro = {
-      workTime: 25,      // minutes
-      breakTime: 5,      // minutes
-      remaining: 25 * 60, // seconds
+      workTime: 25,
+      breakTime: 5,
+      remaining: 25 * 60,
       isRunning: false,
       isBreak: false,
       timerId: null
@@ -691,9 +558,7 @@
       return labels[level] || 'Inconnu';
     }
 
-    function getStatusClass(level) {
-      return 'status-' + Math.min(Math.max(level, 0), 4);
-    }
+    function getStatusClass(level) { return 'status-' + Math.min(Math.max(level, 0), 4); }
 
     function getProgress(topicId) {
       return state.progress[topicId] || { level: 0, score: 0, last_studied: null, notes: '' };
@@ -724,6 +589,169 @@
       return state.tasks.filter(t => t.date === today && !t.isDone);
     }
 
+    // ---------- SCHEDULE HELPER ----------
+    function getScheduleStatus() {
+      const now = new Date();
+      const dayNames = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'];
+      const today = dayNames[now.getDay()];
+      const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+      const todayClasses = COURSE_SCHEDULE.filter(c => c.day === today);
+
+      let currentClass = null;
+      let nextClass = null;
+
+      for (let c of todayClasses) {
+        const start = parseInt(c.start.split(':')[0]) * 60 + parseInt(c.start.split(':')[1]);
+        const end = parseInt(c.end.split(':')[0]) * 60 + parseInt(c.end.split(':')[1]);
+
+        if (currentMinutes >= start && currentMinutes < end) {
+          currentClass = c;
+        }
+      }
+
+      for (let c of todayClasses) {
+        const start = parseInt(c.start.split(':')[0]) * 60 + parseInt(c.start.split(':')[1]);
+        if (currentMinutes < start) {
+          if (!nextClass || start < parseInt(nextClass.start.split(':')[0]) * 60 + parseInt(nextClass.start.split(':')[1])) {
+            nextClass = c;
+          }
+        }
+      }
+
+      return { currentClass, nextClass, todayClasses };
+    }
+
+    // ---------- SMART REVISION ENGINE ----------
+    function computeSmartRevision() {
+      const now = Date.now();
+      const recommendations = [];
+      const ignoreThreshold = 48 * 60 * 60 * 1000; // 48 hours
+
+      state.topics.forEach(topic => {
+        const ignoredUntil = state.ignoredTopics[topic.id];
+        if (ignoredUntil && now < ignoredUntil) return;
+
+        const p = getProgress(topic.id);
+        const lastStudied = p.last_studied ? new Date(p.last_studied).getTime() : 0;
+        const daysSinceLastStudy = Math.floor((now - lastStudied) / 86400000);
+        const errorsInTopic = state.errors.filter(e => e.topic_id === topic.id).length;
+
+        let urgency = 0;
+        urgency += daysSinceLastStudy * 0.5;
+        urgency += (4 - p.level) * 5;
+        urgency += errorsInTopic * 3;
+
+        const lastTests = state.sessions.filter(s => s.topic_id === topic.id && s.type === 'test');
+        if (lastTests.length > 0) {
+          const avgScore = lastTests.reduce((sum, s) => sum + (s.score || 0), 0) / lastTests.length;
+          if (avgScore < 60) urgency += 10;
+        }
+
+        if (urgency > 8 && daysSinceLastStudy > 0) {
+          recommendations.push({
+            topicId: topic.id,
+            subjectId: topic.subject_id,
+            title: topic.title,
+            level: p.level,
+            daysSinceLastStudy: daysSinceLastStudy,
+            errors: errorsInTopic,
+            urgency: urgency
+          });
+        }
+      });
+
+      PROGRAMMING_TOPICS.forEach(topic => {
+        const ignoredUntil = state.ignoredTopics[topic.id];
+        if (ignoredUntil && now < ignoredUntil) return;
+
+        const p = state.programming[topic.id] || { level: 0 };
+        if (p.level < 3 && p.level > 0) {
+          recommendations.push({
+            topicId: topic.id,
+            subjectId: 'programming',
+            title: topic.title,
+            level: p.level,
+            daysSinceLastStudy: 0,
+            errors: 0,
+            urgency: (4 - p.level) * 5 + 5
+          });
+        }
+      });
+
+      recommendations.sort((a, b) => b.urgency - a.urgency);
+
+      const grouped = {};
+      recommendations.forEach(r => {
+        const key = r.subjectId;
+        if (!grouped[key]) grouped[key] = [];
+        grouped[key].push(r);
+      });
+
+      return grouped;
+    }
+
+    // ---------- REMINDER ENGINE (avec heure précise) ----------
+    function checkReminders() {
+      const now = new Date();
+      const nowMinutes = now.getHours() * 60 + now.getMinutes();
+      const nowTimestamp = now.getTime();
+
+      // 1. Class reminders (10 minutes before)
+      const dayNames = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'];
+      const today = dayNames[now.getDay()];
+      const todayClasses = COURSE_SCHEDULE.filter(c => c.day === today);
+
+      todayClasses.forEach(c => {
+        const startMinutes = parseInt(c.start.split(':')[0]) * 60 + parseInt(c.start.split(':')[1]);
+        const diff = startMinutes - nowMinutes;
+        if (diff > 0 && diff <= 10) {
+          const key = `${c.subject}_${c.start}`;
+          if (state.lastNotifiedClass !== key) {
+            state.lastNotifiedClass = key;
+            sendNotification(`⏰ Cours dans 10 min`, `${c.subject} (${c.type}) à ${c.start}`);
+          }
+        }
+      });
+
+      // 2. Exam reminders (3 days before) + (1 hour before)
+      state.exams.forEach(exam => {
+        const examDateTime = new Date(`${exam.date}T${exam.time || '00:00'}`);
+        const diffDays = Math.floor((examDateTime.getTime() - nowTimestamp) / 86400000);
+        const diffHours = (examDateTime.getTime() - nowTimestamp) / (1000 * 60 * 60);
+
+        // 3 days before
+        if (diffDays === 3) {
+          const key = `${exam.id}_3days`;
+          if (state.lastNotifiedExam !== key) {
+            state.lastNotifiedExam = key;
+            sendNotification(`📝 Examen dans 3 jours !`, `${exam.title} - Préparez-vous !`);
+          }
+        }
+
+        // 1 hour before
+        if (diffHours > 0 && diffHours <= 1 && diffHours > 0.5) {
+          const key = `${exam.id}_1hour`;
+          if (state.lastNotifiedExamHour !== key) {
+            state.lastNotifiedExamHour = key;
+            sendNotification(`⏰ Examen dans 1 heure !`, `${exam.title} - Bonne chance !`);
+          }
+        }
+      });
+    }
+
+    function sendNotification(title, body) {
+      if (Notification.permission === 'granted') {
+        new Notification(title, { body, icon: '🐺' });
+      } else if (Notification.permission === 'default') {
+        Notification.requestPermission().then(perm => {
+          if (perm === 'granted') {
+            new Notification(title, { body, icon: '🐺' });
+          }
+        });
+      }
+    }
+
     function navigate(route, params = {}) {
       state.route = route;
       if (route === 'subject' && params.subjectId) state.subjectId = params.subjectId;
@@ -749,97 +777,32 @@
     function renderOnboarding() {
       return `
         <div style="
-          position: fixed; 
-          inset: 0; 
+          position: fixed; inset: 0;
           background: radial-gradient(circle at 50% 0%, #1a2438, #0a0e14 70%);
-          display: flex; 
-          align-items: center; 
-          justify-content: center; 
-          flex-direction: column; 
-          padding: 30px; 
-          text-align: center;
-          z-index: 999;
+          display: flex; align-items: center; justify-content: center; flex-direction: column;
+          padding: 30px; text-align: center; z-index: 999;
         ">
-          
-          <div style="
-            font-size: 80px; 
-            margin-bottom: 16px; 
-            animation: pulse 2.5s ease-in-out infinite;
-            display: inline-block;
-          ">
-            🐺
-          </div>
-
-          <h1 style="
-            font-size: 32px; 
-            font-weight: 700; 
-            letter-spacing: 0.5px; 
-            margin-bottom: 10px; 
-            color: #fff;
-          ">
-            Mission of the White Wolf
-          </h1>
-
-          <p style="
-            font-size: 16px; 
-            color: #8ba2c0; 
-            margin-bottom: 30px; 
-            font-weight: 300;
-            letter-spacing: 0.8px;
-          ">
-            Study → Track → Analyze → Correct → Master
-          </p>
-
+          <div style="font-size: 80px; margin-bottom: 16px; animation: pulse 2.5s ease-in-out infinite; display: inline-block;">🐺</div>
+          <h1 style="font-size: 32px; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 10px; color: #fff;">Mission of the White Wolf</h1>
+          <p style="font-size: 16px; color: #8ba2c0; margin-bottom: 30px; font-weight: 300; letter-spacing: 0.8px;">Study → Track → Analyze → Correct → Master</p>
           <div style="margin-bottom: 40px; width: 100%; max-width: 400px;">
             <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 8px;">
               <span style="font-size: 24px;">📘</span>
               <h2 style="font-size: 20px; font-weight: 600; color: #c8d6e5;">Master APCE — S1</h2>
             </div>
-            <p style="font-size: 14px; color: #6b7f9a;">
-              9 matières du premier semestre. 
-              <br /><span style="color: #4b7bec; font-weight: 500;">Préparez-vous à la maîtrise.</span>
-            </p>
+            <p style="font-size: 14px; color: #6b7f9a;">9 matières du premier semestre. <br /><span style="color: #4b7bec; font-weight: 500;">Préparez-vous à la maîtrise.</span></p>
           </div>
-
           <button id="onboard-finish" style="
-            background: #2a3f60; 
-            color: #fff; 
-            border: 1px solid #3a557a; 
-            padding: 16px 40px; 
-            border-radius: 50px; 
-            font-size: 18px; 
-            font-weight: 600; 
-            cursor: pointer; 
-            transition: all 0.3s ease; 
-            box-shadow: 0 4px 20px rgba(42, 63, 96, 0.4);
-            width: 100%; 
-            max-width: 320px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-          ">
-            🐺 Commencer ma mission →
-          </button>
-
-          <div style="margin-top: 24px; font-size: 12px; color: #4b5a72; letter-spacing: 1px;">
-            Étape 1 / 1
-          </div>
-
+            background: #2a3f60; color: #fff; border: 1px solid #3a557a;
+            padding: 16px 40px; border-radius: 50px; font-size: 18px; font-weight: 600;
+            cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 20px rgba(42, 63, 96, 0.4);
+            width: 100%; max-width: 320px; display: flex; align-items: center; justify-content: center; gap: 12px;
+          ">🐺 Commencer ma mission →</button>
+          <div style="margin-top: 24px; font-size: 12px; color: #4b5a72; letter-spacing: 1px;">Étape 1 / 1</div>
           <style>
-            @keyframes pulse {
-              0% { transform: scale(0.98); opacity: 0.7; }
-              50% { transform: scale(1.05); opacity: 1; }
-              100% { transform: scale(0.98); opacity: 0.7; }
-            }
-            #onboard-finish:hover {
-              background: #354e78;
-              transform: translateY(-2px);
-              box-shadow: 0 6px 25px rgba(42, 63, 96, 0.6);
-            }
-            #onboard-finish:active {
-              transform: scale(0.95);
-            }
+            @keyframes pulse { 0% { transform: scale(0.98); opacity: 0.7; } 50% { transform: scale(1.05); opacity: 1; } 100% { transform: scale(0.98); opacity: 0.7; } }
+            #onboard-finish:hover { background: #354e78; transform: translateY(-2px); box-shadow: 0 6px 25px rgba(42, 63, 96, 0.6); }
+            #onboard-finish:active { transform: scale(0.95); }
           </style>
         </div>
       `;
@@ -859,21 +822,16 @@
       return `
         <div class="app">
           <div class="header">
-            <h1><span class="wolf-icon">🐺</span> White Wolf <span>v3</span></h1>
-            <div style="display:flex;gap:8px;">
-              <button id="btn-export" class="btn-outline btn-small">📤</button>
-              <button id="btn-import" class="btn-outline btn-small">📥</button>
-            </div>
+            <h1><span class="wolf-icon">🐺</span> White Wolf <span>v10</span></h1>
           </div>
-
           ${renderContent(active)}
-
           <nav class="bottom-nav">
             <button class="${active === 'dashboard' ? 'active' : ''}" data-route="dashboard"><span class="nav-icon">📊</span> Dashboard</button>
             <button class="${active === 'master' ? 'active' : ''}" data-route="master"><span class="nav-icon">📚</span> Master</button>
             <button class="${active === 'programming' ? 'active' : ''}" data-route="programming"><span class="nav-icon">💻</span> Code</button>
             <button class="${active === 'planning' ? 'active' : ''}" data-route="planning"><span class="nav-icon">📅</span> Planning</button>
             <button class="${active === 'stats' ? 'active' : ''}" data-route="stats"><span class="nav-icon">📈</span> Stats</button>
+            <button class="${active === 'emploi' ? 'active' : ''}" data-route="emploi"><span class="nav-icon">📋</span> Emploi</button>
           </nav>
         </div>
         ${state.modal ? renderModal() : ''}
@@ -889,8 +847,7 @@
         case 'programming': return renderProgramming();
         case 'planning': return renderPlanning();
         case 'stats': return renderStats();
-        case 'mistakes': return renderMistakes();
-        case 'achievements': return renderAchievements();
+        case 'emploi': return renderEmploi();
         default: return renderDashboard();
       }
     }
@@ -909,8 +866,46 @@
       const isRunning = pomodoro.isRunning;
       const isBreak = pomodoro.isBreak;
 
+      const { currentClass, nextClass } = getScheduleStatus();
+
+      const groupedRevisions = computeSmartRevision();
+      const hasRevisions = Object.keys(groupedRevisions).length > 0;
+
       return `
         <div>
+          <div class="card" style="padding:14px;">
+            <div class="card-title" style="margin-bottom:8px;">📋 Emploi du temps</div>
+            <div class="schedule-status-container">
+              ${currentClass ? `
+                <div class="schedule-status-item">
+                  <div class="status-icon">🔴</div>
+                  <div>
+                    <div class="status-text">En cours : ${currentClass.subject}</div>
+                    <div class="status-sub">${currentClass.start} - ${currentClass.end} • ${currentClass.type}</div>
+                  </div>
+                </div>
+              ` : ''}
+              
+              ${nextClass ? `
+                <div class="schedule-status-item" style="border-color: #2a3f60;">
+                  <div class="status-icon">⏳</div>
+                  <div>
+                    <div class="status-text">Prochain : ${nextClass.subject}</div>
+                    <div class="status-sub">À ${nextClass.start} • ${nextClass.type}</div>
+                  </div>
+                </div>
+              ` : `
+                <div class="schedule-status-item">
+                  <div class="status-icon">☕</div>
+                  <div>
+                    <div class="status-text">Aucun cours prévu aujourd'hui</div>
+                    <div class="status-sub">Profitez de votre temps libre !</div>
+                  </div>
+                </div>
+              `}
+            </div>
+          </div>
+
           <div class="card">
             <div class="card-title">Progression globale <span class="badge">${overall}%</span></div>
             <div class="progress-bar"><div class="fill" style="width:${overall}%;${overall<30?'background:#e86a6a;':overall<60?'background:#e8cc6a;':'background:#6ae8a5;'}"></div></div>
@@ -937,6 +932,60 @@
             `).join('') : '<div class="text-muted text-small">Aucune tâche pour aujourd\'hui. Ajoutez-en une dans Planning.</div>'}
           </div>
 
+          ${hasRevisions ? `
+          <div class="card" id="smart-revision-card">
+            <div class="card-title">🧠 À réviser maintenant <span class="badge">${Object.values(groupedRevisions).reduce((a, b) => a + b.length, 0)}</span></div>
+            ${Object.keys(groupedRevisions).map(subjectId => {
+              const items = groupedRevisions[subjectId];
+              const subjectName = subjectId === 'programming' ? '💻 Programmation' : (state.subjects.find(s => s.id === subjectId)?.name || 'Matière');
+              const totalUrgency = items.reduce((sum, i) => sum + i.urgency, 0);
+              const avgUrgency = totalUrgency / items.length;
+              let groupColor = '🟢';
+              if (avgUrgency > 30) groupColor = '🔴';
+              else if (avgUrgency > 15) groupColor = '🟡';
+
+              return `
+                <div class="revision-group" id="group-${subjectId}">
+                  <div class="revision-group-header" data-group-toggle="${subjectId}">
+                    <div>
+                      <span class="group-title">${groupColor} ${subjectName}</span>
+                      <span class="group-meta"> • ${items.length} chapitre${items.length > 1 ? 's' : ''}</span>
+                    </div>
+                    <span class="group-meta">▼</span>
+                  </div>
+                  <div class="revision-group-body open" id="body-${subjectId}">
+                    ${items.map(r => {
+                      let icon = '🟢';
+                      if (r.urgency > 30) icon = '🔴';
+                      else if (r.urgency > 15) icon = '🟡';
+
+                      return `
+                        <div class="revision-item" id="rev-item-${r.topicId}">
+                          <div class="left">
+                            <span class="priority-icon">${icon}</span>
+                            <div>
+                              <div class="name">${r.title}</div>
+                              <div class="sub">
+                                ${r.daysSinceLastStudy > 0 ? `📅 ${r.daysSinceLastStudy} jours` : ''}
+                                ${r.level !== undefined ? ` • Niveau ${r.level}/4` : ''}
+                                ${r.errors > 0 ? ` • ❌ ${r.errors} erreurs` : ''}
+                              </div>
+                            </div>
+                          </div>
+                          <div class="right">
+                            <button class="btn-small btn-outline" data-session-topic="${r.topicId}">🔄 Réviser</button>
+                            <button class="btn-small btn-ignore btn-outline" data-ignore-topic="${r.topicId}">❌</button>
+                          </div>
+                        </div>
+                      `;
+                    }).join('')}
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+          ` : ''}
+
           <div class="card">
             <div class="card-title">⏱️ Minuteur Pomodoro <span class="badge">${isBreak ? '☕ Pause' : '📖 Travail'}</span></div>
             <div class="pomodoro-container">
@@ -947,16 +996,8 @@
                 <button class="btn-reset" data-pomo-reset>↺ Reset</button>
               </div>
               <div class="timer-settings">
-                <label>
-                  🎯 Travail:
-                  <input type="number" id="pomo-work" value="${pomodoro.workTime}" min="1" max="120" ${isRunning ? 'disabled' : ''} />
-                  min
-                </label>
-                <label>
-                  ☕ Pause:
-                  <input type="number" id="pomo-break" value="${pomodoro.breakTime}" min="1" max="30" ${isRunning ? 'disabled' : ''} />
-                  min
-                </label>
+                <label>🎯 Travail: <input type="number" id="pomo-work" value="${pomodoro.workTime}" min="1" max="120" ${isRunning ? 'disabled' : ''} /> min</label>
+                <label>☕ Pause: <input type="number" id="pomo-break" value="${pomodoro.breakTime}" min="1" max="30" ${isRunning ? 'disabled' : ''} /> min</label>
                 <button class="btn-small btn-outline" data-pomo-apply>Appliquer</button>
               </div>
             </div>
@@ -1173,6 +1214,24 @@
             `).join('') : '<div class="text-muted text-small">Aucune tâche pour aujourd\'hui.</div>'}
             <button class="btn-primary btn-small mt-8" data-add-task>➕ Ajouter une tâche</button>
           </div>
+
+          <!-- NEW: Exams Section avec Heure -->
+          <div class="card">
+            <div class="card-title">📝 Mes examens <span class="badge">${state.exams.length}</span></div>
+            ${state.exams.length ? state.exams.map(e => `
+              <div class="exam-item">
+                <div class="exam-left">
+                  <span class="exam-title">${e.title}</span>
+                  <span class="exam-date">📅 ${new Date(e.date).toLocaleDateString('fr-FR')} ${e.time ? 'à '+e.time : ''}</span>
+                </div>
+                <div class="exam-right">
+                  <span class="exam-badge">À venir</span>
+                  <button class="btn-small btn-outline" data-delete-exam="${e.id}">🗑️</button>
+                </div>
+              </div>
+            `).join('') : '<div class="text-muted text-small">Aucun examen enregistré.</div>'}
+            <button class="btn-primary btn-small mt-8" data-add-exam>➕ Ajouter un examen</button>
+          </div>
         </div>
       `;
     }
@@ -1259,23 +1318,38 @@
       `;
     }
 
-    // ----- MISTAKES -----
-    function renderMistakes() {
+    // ----- EMPLOI DU TEMPS -----
+    function renderEmploi() {
+      const days = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
+      const dayKeys = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'];
+
       return `
         <div>
-          <h2 style="font-size:22px;margin-bottom:16px;">❌ Error Bank</h2>
-          <div class="card">
-            ${state.errors.length ? state.errors.map(e => `
-              <div class="mission-item">
-                <div style="flex:1;">
-                  <div>${e.problem}</div>
-                  <div class="text-small text-muted">${e.correction ? 'Corrigé' : 'À revoir'}</div>
-                </div>
-                <span class="chip">${e.status}</span>
+          <h2 style="font-size:22px;margin-bottom:16px;">📋 Emploi du Temps</h2>
+          ${dayKeys.map(dayKey => {
+            const dayClasses = COURSE_SCHEDULE.filter(c => c.day === dayKey);
+            const dayName = days[dayKeys.indexOf(dayKey)];
+            if (dayClasses.length === 0) return `
+              <div class="card">
+                <div class="card-title">${dayName}</div>
+                <div class="text-muted text-small">Aucun cours</div>
               </div>
-            `).join('') : '<div class="text-muted">Aucune erreur enregistrée</div>'}
-          </div>
-          <button class="btn-primary" data-add-mistake>➕ Ajouter une erreur</button>
+            `;
+            return `
+              <div class="card">
+                <div class="card-title">${dayName}</div>
+                ${dayClasses.map(c => `
+                  <div class="schedule-item">
+                    <span class="subj">${c.subject}</span>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                      <span class="time">${c.start} - ${c.end}</span>
+                      <span class="type ${c.type}">${c.type}</span>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            `;
+          }).join('')}
         </div>
       `;
     }
@@ -1297,6 +1371,26 @@
     function renderModal() {
       if (!state.modal) return '';
       const m = state.modal;
+      if (m.type === 'exam') {
+        return `
+          <div class="modal-overlay" data-close-modal>
+            <div class="modal-content">
+              <h3>➕ Ajouter un examen</h3>
+              <div style="display:grid;gap:12px;">
+                <input id="exam-title" placeholder="Nom de l'examen (ex: Chimie analytique Ch.4-5)" />
+                <div class="flex gap-8">
+                  <input type="date" id="exam-date" value="${new Date().toISOString().slice(0,10)}" />
+                  <input type="time" id="exam-time" value="09:00" />
+                </div>
+              </div>
+              <div class="modal-actions">
+                <button class="btn-outline" data-close-modal>Annuler</button>
+                <button class="btn-primary" data-save-exam>Enregistrer</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }
       if (m.type === 'task') {
         return `
           <div class="modal-overlay" data-close-modal>
@@ -1574,6 +1668,99 @@
         });
       });
 
+      // ----- EXAMS EVENTS -----
+      document.querySelectorAll('[data-add-exam]').forEach(el => {
+        el.addEventListener('click', () => {
+          state.modal = { type: 'exam' };
+          render();
+        });
+      });
+      document.querySelectorAll('[data-save-exam]').forEach(el => {
+        el.addEventListener('click', () => {
+          const title = document.getElementById('exam-title')?.value;
+          const date = document.getElementById('exam-date')?.value;
+          const time = document.getElementById('exam-time')?.value;
+          if (!title || !date) { alert('Veuillez remplir tous les champs'); return; }
+          state.exams.push({
+            id: generateId(),
+            title,
+            date,
+            time
+          });
+          state.modal = null;
+          saveState();
+          render();
+        });
+      });
+      document.querySelectorAll('[data-delete-exam]').forEach(el => {
+        el.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const id = el.dataset.deleteExam;
+          if (confirm('Supprimer cet examen ?')) {
+            state.exams = state.exams.filter(e => e.id !== id);
+            saveState();
+            render();
+          }
+        });
+      });
+
+      // ----- SMART REVISION EVENTS -----
+      document.querySelectorAll('[data-group-toggle]').forEach(el => {
+        el.addEventListener('click', () => {
+          const groupId = el.dataset.groupToggle;
+          const body = document.getElementById(`body-${groupId}`);
+          if (body) body.classList.toggle('open');
+        });
+      });
+
+      document.querySelectorAll('[data-ignore-topic]').forEach(el => {
+        el.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const topicId = el.dataset.ignoreTopic;
+          const until = Date.now() + 48 * 60 * 60 * 1000;
+          state.ignoredTopics[topicId] = until;
+          
+          const item = document.getElementById(`rev-item-${topicId}`);
+          if (item) {
+            item.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+            item.style.opacity = '0';
+            item.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+              item.remove();
+              const groupBody = item.closest('.revision-group-body');
+              if (groupBody) {
+                const remainingItems = groupBody.querySelectorAll('.revision-item');
+                if (remainingItems.length === 0) {
+                  const group = groupBody.closest('.revision-group');
+                  if (group) {
+                    group.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                    group.style.opacity = '0';
+                    group.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                      group.remove();
+                      const card = document.getElementById('smart-revision-card');
+                      if (card) {
+                        const remainingGroups = card.querySelectorAll('.revision-group');
+                        if (remainingGroups.length === 0) {
+                          card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                          card.style.opacity = '0';
+                          card.style.transform = 'scale(0.95)';
+                          setTimeout(() => { card.remove(); }, 300);
+                        }
+                      }
+                    }, 300);
+                  }
+                }
+              }
+              saveState();
+            }, 300);
+          } else {
+            saveState();
+            render();
+          }
+        });
+      });
+
       // ----- POMODORO EVENTS -----
       document.querySelectorAll('[data-pomo-start]').forEach(el => {
         el.addEventListener('click', startPomodoro);
@@ -1668,6 +1855,7 @@
             p.last_studied = new Date().toISOString();
             state.progress[topicId] = p;
           }
+          delete state.ignoredTopics[topicId];
           state.modal = null;
           saveState();
           render();
@@ -1695,8 +1883,6 @@
       document.querySelectorAll('[data-close-modal]').forEach(el => {
         el.addEventListener('click', () => { state.modal = null; render(); });
       });
-      document.getElementById('btn-export')?.addEventListener('click', exportData);
-      document.getElementById('btn-import')?.addEventListener('click', importData);
     }
 
     // ---------- DATA PERSISTENCE ----------
@@ -1709,6 +1895,8 @@
         errors: state.errors,
         programming: state.programming,
         tasks: state.tasks,
+        exams: state.exams,
+        ignoredTopics: state.ignoredTopics,
         settings: state.settings,
         onboardingDone: state.onboardingDone,
         customSchedule: state.customSchedule
@@ -1727,6 +1915,8 @@
           state.errors = data.errors || [];
           state.programming = data.programming || {};
           state.tasks = data.tasks || [];
+          state.exams = data.exams || [];
+          state.ignoredTopics = data.ignoredTopics || {};
           state.settings = data.settings || { theme: 'dark' };
           state.onboardingDone = data.onboardingDone || false;
           state.customSchedule = data.customSchedule || {};
@@ -1738,6 +1928,8 @@
           state.errors = [];
           state.programming = {};
           state.tasks = [];
+          state.exams = [];
+          state.ignoredTopics = {};
           state.settings = { theme: 'dark' };
           state.onboardingDone = false;
           state.customSchedule = {};
@@ -1747,66 +1939,21 @@
       }
     }
 
-    async function exportData() {
-      const data = {
-        version: '3.0',
-        exportedAt: new Date().toISOString(),
-        subjects: state.subjects,
-        topics: state.topics,
-        progress: state.progress,
-        sessions: state.sessions,
-        errors: state.errors,
-        programming: state.programming,
-        tasks: state.tasks,
-        settings: state.settings,
-        customSchedule: state.customSchedule
-      };
-      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `whitewolf_backup_${new Date().toISOString().slice(0,10)}.json`;
-      a.click();
-      URL.revokeObjectURL(url);
-    }
-
-    async function importData() {
-      const input = document.createElement('input');
-      input.type = 'file';
-      input.accept = 'application/json';
-      input.onchange = (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = async (ev) => {
-          try {
-            const data = JSON.parse(ev.target.result);
-            if (!data.subjects || !data.topics) { alert('Fichier invalide'); return; }
-            if (!confirm('Importer va remplacer toutes les données. Continuer ?')) return;
-            state.subjects = data.subjects;
-            state.topics = data.topics;
-            state.progress = data.progress || {};
-            state.sessions = data.sessions || [];
-            state.errors = data.errors || [];
-            state.programming = data.programming || {};
-            state.tasks = data.tasks || [];
-            state.settings = data.settings || { theme: 'dark' };
-            state.customSchedule = data.customSchedule || {};
-            await saveState();
-            render();
-            alert('Import terminé !');
-          } catch (err) { alert('Erreur d\'import : ' + err.message); }
-        };
-        reader.readAsText(file);
-      };
-      input.click();
-    }
+    // ---------- REMINDER LOOP ----------
+    setInterval(() => {
+      if (state.onboardingDone) {
+        checkReminders();
+      }
+    }, 60000);
 
     // ---------- INIT ----------
     async function init() {
       await openDB();
       await loadState();
       render();
+      if (Notification.permission === 'default') {
+        Notification.requestPermission();
+      }
     }
 
     init();

@@ -347,7 +347,7 @@
 
 <script>
   // ============================================================
-  //  MISSION OF THE WHITE WOLF — V10 (EXAMS WITH TIME)
+  //  MISSION OF THE WHITE WOLF — V11 (COLLAPSED BY DEFAULT)
   // ============================================================
 
   (function() {
@@ -691,13 +691,12 @@
       return grouped;
     }
 
-    // ---------- REMINDER ENGINE (avec heure précise) ----------
+    // ---------- REMINDER ENGINE ----------
     function checkReminders() {
       const now = new Date();
       const nowMinutes = now.getHours() * 60 + now.getMinutes();
       const nowTimestamp = now.getTime();
 
-      // 1. Class reminders (10 minutes before)
       const dayNames = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'];
       const today = dayNames[now.getDay()];
       const todayClasses = COURSE_SCHEDULE.filter(c => c.day === today);
@@ -714,13 +713,11 @@
         }
       });
 
-      // 2. Exam reminders (3 days before) + (1 hour before)
       state.exams.forEach(exam => {
         const examDateTime = new Date(`${exam.date}T${exam.time || '00:00'}`);
         const diffDays = Math.floor((examDateTime.getTime() - nowTimestamp) / 86400000);
         const diffHours = (examDateTime.getTime() - nowTimestamp) / (1000 * 60 * 60);
 
-        // 3 days before
         if (diffDays === 3) {
           const key = `${exam.id}_3days`;
           if (state.lastNotifiedExam !== key) {
@@ -729,7 +726,6 @@
           }
         }
 
-        // 1 hour before
         if (diffHours > 0 && diffHours <= 1 && diffHours > 0.5) {
           const key = `${exam.id}_1hour`;
           if (state.lastNotifiedExamHour !== key) {
@@ -822,7 +818,7 @@
       return `
         <div class="app">
           <div class="header">
-            <h1><span class="wolf-icon">🐺</span> White Wolf <span>v10</span></h1>
+            <h1><span class="wolf-icon">🐺</span> White Wolf <span>v11</span></h1>
           </div>
           ${renderContent(active)}
           <nav class="bottom-nav">
@@ -852,7 +848,7 @@
       }
     }
 
-    // ----- DASHBOARD -----
+    // ----- DASHBOARD (Collapsed by default) -----
     function renderDashboard() {
       const totalTopics = state.topics.length;
       const progressed = state.topics.filter(t => getProgress(t.id).level > 0).length;
@@ -953,7 +949,7 @@
                     </div>
                     <span class="group-meta">▼</span>
                   </div>
-                  <div class="revision-group-body open" id="body-${subjectId}">
+                  <div class="revision-group-body" id="body-${subjectId}">
                     ${items.map(r => {
                       let icon = '🟢';
                       if (r.urgency > 30) icon = '🔴';
@@ -1215,7 +1211,6 @@
             <button class="btn-primary btn-small mt-8" data-add-task>➕ Ajouter une tâche</button>
           </div>
 
-          <!-- NEW: Exams Section avec Heure -->
           <div class="card">
             <div class="card-title">📝 Mes examens <span class="badge">${state.exams.length}</span></div>
             ${state.exams.length ? state.exams.map(e => `

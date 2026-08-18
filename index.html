@@ -430,7 +430,7 @@
 
 <script>
   // ============================================================
-  //  WHITE WOLF SCHOLAR — V21 (FIXED FILE UPLOAD)
+  //  WHITE WOLF SCHOLAR — V23 (RESOURCE FOLDERS)
   // ============================================================
 
   (function() {
@@ -612,7 +612,7 @@
       programming: {},
       tasks: [],
       exams: [],
-      resources: {}, // { subjectId: [ { id, title, url, dateAdded } ] }
+      resources: {}, // { subjectId: { folderName: [ { id, title, url, dateAdded, tag } ] } }
       ignoredTopics: {},
       settings: {
         theme: 'dark',
@@ -626,6 +626,7 @@
       lastNotifiedExam: '',
       lastNotifiedExamHour: '',
       isSettingsOpen: false,
+      resourceFilter: 'Tout',
     };
 
     // ---------- POMODORO STATE ----------
@@ -907,7 +908,7 @@
       return `
         <div class="app">
           <div class="header">
-            <h1><span class="wolf-icon">🐺</span> White Wolf Scholar <span>v21</span></h1>
+            <h1><span class="wolf-icon">🐺</span> White Wolf Scholar <span>v23</span></h1>
             <div style="position:relative;">
               <span class="settings-btn" id="settings-trigger">⚙️</span>
               <div class="settings-dropdown" id="settings-menu">
@@ -1457,36 +1458,75 @@
       `;
     }
 
-    // ----- RESOURCES (CENTRALIZED) -----
+    // ----- RESOURCES (CENTRALIZED + FOLDERS) -----
     function renderResources() {
-      const subjectKeys = Object.keys(state.resources).filter(id => state.resources[id].length > 0);
-      const hasResources = subjectKeys.length > 0;
+      // Gather all resources
+      let allResources = [];
+      Object.keys(state.resources).forEach(subjectId => {
+        const subject = state.subjects.find(s => s.id === subjectId);
+        const folders = state.resources[subjectId] || {};
+        Object.keys(folders).forEach(folderName => {
+          (folders[folderName] || []).forEach(r => {
+            allResources.push({ ...r, subjectName: subject ? subject.name : 'Matière inconnue', folder: folderName });
+          });
+        });
+      });
+
+      // Apply filter
+      if (state.resourceFilter !== 'Tout') {
+        allResources = allResources.filter(r => r.tag === state.resourceFilter);
+      }
+
+      // Group by subject then by folder
+      const grouped = {};
+      allResources.forEach(r => {
+        if (!grouped[r.subjectName]) grouped[r.subjectName] = {};
+        if (!grouped[r.subjectName][r.folder]) grouped[r.subjectName][r.folder] = [];
+        grouped[r.subjectName][r.folder].push(r);
+      });
+
+      const filterTags = ['Tout', '📖 Cours', '📝 Exercices', '🧪 Examens', '📄 Résumés', '📚 Autres'];
+      const hasResources = Object.keys(grouped).length > 0;
 
       return `
         <div>
           <h2 style="font-size:22px;margin-bottom:16px;">📚 Ressources</h2>
+          
+          <!-- Filters & Folders Controls -->
+          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;align-items:center;">
+            ${filterTags.map(tag => `
+              <button class="btn-small ${state.resourceFilter === tag ? 'btn-primary' : 'btn-outline'}" data-filter-tag="${tag}">${tag}</button>
+            `).join('')}
+            <button class="btn-small btn-outline" data-add-folder>📁 Nouveau dossier</button>
+          </div>
+
           <div class="card">
-            ${hasResources ? subjectKeys.map(id => {
-              const subject = state.subjects.find(s => s.id === id);
-              const items = state.resources[id];
-              return `
-                <div style="margin-bottom:12px;">
-                  <div class="resource-group-title">${subject ? subject.name : 'Matière inconnue'} (${items.length})</div>
-                  ${items.map(r => `
-                    <div class="resource-item">
-                      <div class="left">
-                        <span class="title">${r.title}</span>
-                        <span class="meta">📅 ${new Date(r.dateAdded).toLocaleDateString('fr-FR')}</span>
+            ${hasResources ? Object.keys(grouped).map(subjectName => `
+              <div style="margin-bottom:16px;">
+                <div class="resource-group-title">${subjectName}</div>
+                ${Object.keys(grouped[subjectName]).map(folderName => `
+                  <div style="margin-bottom:8px;padding-left:12px;">
+                    <div style="font-weight:500;font-size:14px;color:#8ba2c0;">📁 ${folderName} (${grouped[subjectName][folderName].length})</div>
+                    ${grouped[subjectName][folderName].map(r => `
+                      <div class="resource-item" style="padding-left:12px;">
+                        <div class="left">
+                          <span class="title">${r.title}</span>
+                          <span class="meta">${r.tag || '📚 Autres'} • 📅 ${new Date(r.dateAdded).toLocaleDateString('fr-FR')}</span>
+                        </div>
+                        <div class="right">
+                          <select class="btn-small btn-outline" data-move-resource="${r.subjectId}|${r.id}" style="font-size:11px;padding:2px 8px;">
+                            <option value="">📂 Déplacer</option>
+                            ${Object.keys(state.resources[r.subjectId] || {}).map(f => `<option value="${f}">${f}</option>`).join('')}
+                          </select>
+                          <a href="${r.url}" target="_blank" class="btn-small btn-outline" style="text-decoration:none;">🔗</a>
+                          <button class="btn-small btn-outline" data-delete-resource="${r.subjectId}|${r.id}">🗑️</button>
+                        </div>
                       </div>
-                      <div class="right">
-                        <a href="${r.url}" target="_blank" class="btn-small btn-outline" style="text-decoration:none;">🔗</a>
-                        <button class="btn-small btn-outline" data-delete-resource="${id}|${r.id}">🗑️</button>
-                      </div>
-                    </div>
-                  `).join('')}
-                </div>
-              `;
-            }).join('') : '<div class="text-muted text-small">Aucune ressource enregistrée.</div>'}
+                    `).join('')}
+                  </div>
+                `).join('')}
+              </div>
+            `).join('') : '<div class="text-muted text-small">Aucune ressource ne correspond à ce filtre.</div>'}
             <button class="btn-primary btn-small mt-8" data-add-resource>➕ Ajouter une ressource</button>
           </div>
         </div>
@@ -1510,6 +1550,27 @@
     function renderModal() {
       if (!state.modal) return '';
       const m = state.modal;
+      if (m.type === 'folder') {
+        return `
+          <div class="modal-overlay">
+            <div class="modal-content">
+              <span class="close-btn" data-close-modal>❌</span>
+              <h3>📁 Nouveau dossier</h3>
+              <div style="display:grid;gap:12px;">
+                <select id="folder-subject">
+                  <option value="">Choisir une matière</option>
+                  ${state.subjects.map(s => `<option value="${s.id}">${s.name}</option>`).join('')}
+                </select>
+                <input id="folder-name" placeholder="Nom du dossier" />
+              </div>
+              <div class="modal-actions">
+                <button class="btn-outline" data-close-modal>Annuler</button>
+                <button class="btn-primary" data-save-folder>Enregistrer</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }
       if (m.type === 'resource') {
         return `
           <div class="modal-overlay">
@@ -1521,8 +1582,18 @@
                   <option value="">Choisir une matière</option>
                   ${state.subjects.map(s => `<option value="${s.id}">${s.name}</option>`).join('')}
                 </select>
+                <select id="resource-folder">
+                  <option value="Général">📁 Général</option>
+                  <option value="Examens">📁 Examens</option>
+                </select>
                 <input id="resource-title" placeholder="Titre de la ressource" />
-                
+                <select id="resource-tag">
+                  <option value="📖 Cours">📖 Cours</option>
+                  <option value="📝 Exercices">📝 Exercices</option>
+                  <option value="🧪 Examens">🧪 Examens</option>
+                  <option value="📄 Résumés">📄 Résumés</option>
+                  <option value="📚 Autres" selected>📚 Autres</option>
+                </select>
                 <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
                   <input id="resource-url" placeholder="https://..." style="flex:1;" />
                   <div style="position:relative; width: auto;">
@@ -1551,7 +1622,7 @@
               <div style="display:grid;gap:12px;text-align:center;padding:10px 0;">
                 <div style="font-size:64px;">🐺</div>
                 <div style="font-weight:600;font-size:22px;">White Wolf Scholar</div>
-                <div class="text-muted">Version 21</div>
+                <div class="text-muted">Version 23</div>
                 <div class="text-muted text-small">Built with ❤️ for dedicated students.</div>
               </div>
               <div class="modal-actions">
@@ -1793,7 +1864,64 @@
         });
       });
 
-      // ----- RESOURCE EVENTS (Centralized) -----
+      // ----- RESOURCE FOLDER EVENTS -----
+      document.querySelectorAll('[data-add-folder]').forEach(el => {
+        el.addEventListener('click', () => {
+          state.modal = { type: 'folder' };
+          render();
+        });
+      });
+      document.querySelectorAll('[data-save-folder]').forEach(el => {
+        el.addEventListener('click', () => {
+          const subjectId = document.getElementById('folder-subject')?.value;
+          const folderName = document.getElementById('folder-name')?.value;
+          if (!subjectId || !folderName) { alert('Veuillez remplir tous les champs.'); return; }
+          if (!state.resources[subjectId]) state.resources[subjectId] = {};
+          if (state.resources[subjectId][folderName]) { alert('Ce dossier existe déjà.'); return; }
+          state.resources[subjectId][folderName] = [];
+          state.modal = null;
+          saveState();
+          render();
+        });
+      });
+
+      // ----- RESOURCE EVENTS (Centralized + Folders) -----
+      document.querySelectorAll('[data-filter-tag]').forEach(el => {
+        el.addEventListener('click', () => {
+          state.resourceFilter = el.dataset.filterTag;
+          render();
+        });
+      });
+
+      document.querySelectorAll('[data-move-resource]').forEach(el => {
+        el.addEventListener('change', (e) => {
+          const data = el.dataset.moveResource.split('|');
+          const subjectId = data[0];
+          const resourceId = data[1];
+          const newFolder = e.target.value;
+          if (!newFolder) return;
+
+          // Find and remove from current folder
+          let resourceToMove = null;
+          const folders = state.resources[subjectId] || {};
+          Object.keys(folders).forEach(folderName => {
+            const index = folders[folderName].findIndex(r => r.id === resourceId);
+            if (index !== -1) {
+              resourceToMove = folders[folderName][index];
+              folders[folderName].splice(index, 1);
+            }
+          });
+
+          // Add to new folder
+          if (resourceToMove) {
+            if (!state.resources[subjectId][newFolder]) state.resources[subjectId][newFolder] = [];
+            state.resources[subjectId][newFolder].push(resourceToMove);
+          }
+          saveState();
+          render();
+        });
+      });
+
       document.querySelectorAll('[data-add-resource]').forEach(el => {
         el.addEventListener('click', () => {
           state.modal = { type: 'resource' };
@@ -1801,7 +1929,6 @@
         });
       });
       
-      // Gestion du fichier (nouvelle méthode sans erreur)
       document.getElementById('resource-file')?.addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -1814,16 +1941,20 @@
       document.querySelectorAll('[data-save-resource]').forEach(el => {
         el.addEventListener('click', () => {
           const subjectId = document.getElementById('resource-subject')?.value;
+          const folderName = document.getElementById('resource-folder')?.value || 'Général';
           const title = document.getElementById('resource-title')?.value;
+          const tag = document.getElementById('resource-tag')?.value || '📚 Autres';
           const url = document.getElementById('resource-url')?.value;
           if (!subjectId || !title || !url) { alert('Veuillez remplir tous les champs.'); return; }
           
-          if (!state.resources[subjectId]) state.resources[subjectId] = [];
+          if (!state.resources[subjectId]) state.resources[subjectId] = {};
+          if (!state.resources[subjectId][folderName]) state.resources[subjectId][folderName] = [];
           
-          state.resources[subjectId].push({
+          state.resources[subjectId][folderName].push({
             id: generateId(),
             title: title,
             url: url,
+            tag: tag,
             dateAdded: new Date().toISOString().slice(0,10)
           });
           state.modal = null;
@@ -1838,7 +1969,10 @@
           const subjectId = data[0];
           const resourceId = data[1];
           if (confirm('Supprimer cette ressource ?')) {
-            state.resources[subjectId] = (state.resources[subjectId] || []).filter(r => r.id !== resourceId);
+            const folders = state.resources[subjectId] || {};
+            Object.keys(folders).forEach(folderName => {
+              folders[folderName] = folders[folderName].filter(r => r.id !== resourceId);
+            });
             saveState();
             render();
           }

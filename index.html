@@ -436,7 +436,7 @@
 
 <script>
   // ============================================================
-  //  WHITE WOLF SCHOLAR — V24 (PWA READY)
+  //  WHITE WOLF SCHOLAR — V24 FINAL (INDEX READY)
   // ============================================================
 
   (function() {
@@ -618,7 +618,7 @@
       programming: {},
       tasks: [],
       exams: [],
-      resources: {}, // { subjectId: { folderName: [ { id, title, url, dateAdded, tag } ] } }
+      resources: {}, 
       ignoredTopics: {},
       settings: {
         theme: 'dark',
@@ -1460,81 +1460,6 @@
               </div>
             `;
           }).join('')}
-        </div>
-      `;
-    }
-
-    // ----- RESOURCES (CENTRALIZED + FOLDERS) -----
-    function renderResources() {
-      // Gather all resources
-      let allResources = [];
-      Object.keys(state.resources).forEach(subjectId => {
-        const subject = state.subjects.find(s => s.id === subjectId);
-        const folders = state.resources[subjectId] || {};
-        Object.keys(folders).forEach(folderName => {
-          (folders[folderName] || []).forEach(r => {
-            allResources.push({ ...r, subjectName: subject ? subject.name : 'Matière inconnue', folder: folderName });
-          });
-        });
-      });
-
-      // Apply filter
-      if (state.resourceFilter !== 'Tout') {
-        allResources = allResources.filter(r => r.tag === state.resourceFilter);
-      }
-
-      // Group by subject then by folder
-      const grouped = {};
-      allResources.forEach(r => {
-        if (!grouped[r.subjectName]) grouped[r.subjectName] = {};
-        if (!grouped[r.subjectName][r.folder]) grouped[r.subjectName][r.folder] = [];
-        grouped[r.subjectName][r.folder].push(r);
-      });
-
-      const filterTags = ['Tout', '📖 Cours', '📝 Exercices', '🧪 Examens', '📄 Résumés', '📚 Autres'];
-      const hasResources = Object.keys(grouped).length > 0;
-
-      return `
-        <div>
-          <h2 style="font-size:22px;margin-bottom:16px;">📚 Ressources</h2>
-          
-          <!-- Filters & Folders Controls -->
-          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;align-items:center;">
-            ${filterTags.map(tag => `
-              <button class="btn-small ${state.resourceFilter === tag ? 'btn-primary' : 'btn-outline'}" data-filter-tag="${tag}">${tag}</button>
-            `).join('')}
-            <button class="btn-small btn-outline" data-add-folder>📁 Nouveau dossier</button>
-          </div>
-
-          <div class="card">
-            ${hasResources ? Object.keys(grouped).map(subjectName => `
-              <div style="margin-bottom:16px;">
-                <div class="resource-group-title">${subjectName}</div>
-                ${Object.keys(grouped[subjectName]).map(folderName => `
-                  <div style="margin-bottom:8px;padding-left:12px;">
-                    <div style="font-weight:500;font-size:14px;color:#8ba2c0;">📁 ${folderName} (${grouped[subjectName][folderName].length})</div>
-                    ${grouped[subjectName][folderName].map(r => `
-                      <div class="resource-item" style="padding-left:12px;">
-                        <div class="left">
-                          <span class="title">${r.title}</span>
-                          <span class="meta">${r.tag || '📚 Autres'} • 📅 ${new Date(r.dateAdded).toLocaleDateString('fr-FR')}</span>
-                        </div>
-                        <div class="right">
-                          <select class="btn-small btn-outline" data-move-resource="${r.subjectId}|${r.id}" style="font-size:11px;padding:2px 8px;">
-                            <option value="">📂 Déplacer</option>
-                            ${Object.keys(state.resources[r.subjectId] || {}).map(f => `<option value="${f}">${f}</option>`).join('')}
-                          </select>
-                          <a href="${r.url}" target="_blank" class="btn-small btn-outline" style="text-decoration:none;">🔗</a>
-                          <button class="btn-small btn-outline" data-delete-resource="${r.subjectId}|${r.id}">🗑️</button>
-                        </div>
-                      </div>
-                    `).join('')}
-                  </div>
-                `).join('')}
-              </div>
-            `).join('') : '<div class="text-muted text-small">Aucune ressource ne correspond à ce filtre.</div>'}
-            <button class="btn-primary btn-small mt-8" data-add-resource>➕ Ajouter une ressource</button>
-          </div>
         </div>
       `;
     }

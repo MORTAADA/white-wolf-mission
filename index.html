@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes" />
   <title>White Wolf Scholar</title>
-  <link rel="manifest" href="./manifest.json" />
   <style>
+    /* ===== RESET & BASE ===== */
     * {
       margin: 0;
       padding: 0;
@@ -20,6 +20,10 @@
       display: flex;
       justify-content: center;
     }
+    a, button, .clickable {
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
     button {
       background: none;
       border: none;
@@ -32,6 +36,7 @@
     }
     button:active { transform: scale(0.95); }
     input, select, textarea {
+      font: inherit;
       background: #141c26;
       border: 1px solid #2a3442;
       color: #e2e8f0;
@@ -39,17 +44,28 @@
       padding: 12px 14px;
       width: 100%;
       font-size: 16px;
+      outline: none;
+      transition: border 0.2s;
     }
     input:focus, select:focus, textarea:focus { border-color: #4b7bec; }
+    textarea { resize: vertical; min-height: 70px; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #121a24; }
+    ::-webkit-scrollbar-thumb { background: #2f3d52; border-radius: 10px; }
+
+    /* ===== LAYOUT ===== */
     .app {
       width: 100%;
       max-width: 780px;
       padding: 16px 18px 90px;
     }
+
     @media (min-width: 900px) {
-      .app { max-width: 860px; padding: 30px 40px; }
+      .app { padding: 24px 30px 90px; max-width: 860px; }
       .bottom-nav { display: none; }
+      body { padding-bottom: 0; }
     }
+
     .header {
       display: flex;
       justify-content: space-between;
@@ -61,20 +77,34 @@
     .header h1 {
       font-size: 22px;
       font-weight: 700;
+      letter-spacing: 0.5px;
       display: flex;
       align-items: center;
       gap: 10px;
       background: linear-gradient(135deg, #c0d0f0, #7a9bcb);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
-    .wolf-icon { font-size: 30px; -webkit-text-fill-color: initial; color: #c0d0f0; }
+    .header h1 span {
+      font-weight: 300;
+      -webkit-text-fill-color: #6b7f9a;
+      font-size: 18px;
+    }
+    .wolf-icon {
+      font-size: 30px;
+      -webkit-text-fill-color: initial;
+      color: #c0d0f0;
+    }
+
+    /* ===== SETTINGS GEAR ===== */
     .settings-btn {
       font-size: 22px;
       color: #6b7f9a;
       cursor: pointer;
       padding: 4px;
       border-radius: 50%;
+      transition: all 0.2s ease;
     }
     .settings-btn:hover { color: #c0d0f0; background: #1a2430; }
     .settings-dropdown {
@@ -98,6 +128,7 @@
       padding: 10px 16px;
       color: #c8d6e5;
       cursor: pointer;
+      transition: background 0.15s;
     }
     .settings-dropdown .item:hover { background: #1a2430; }
     .settings-dropdown .item .icon { font-size: 18px; }
@@ -107,6 +138,8 @@
       font-size: 12px;
       color: #6b7f9a;
     }
+
+    /* ===== BOTTOM NAV ===== */
     .bottom-nav {
       position: fixed;
       bottom: 0;
@@ -114,10 +147,11 @@
       right: 0;
       background: rgba(14, 20, 28, 0.92);
       backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       border-top: 1px solid #222b38;
       display: flex;
       justify-content: space-around;
-      padding: 8px 0;
+      padding: 8px 0 env(safe-area-inset-bottom, 8px);
       z-index: 100;
     }
     .bottom-nav button {
@@ -126,19 +160,23 @@
       font-size: 11px;
       padding: 6px 0;
       color: #6b7f9a;
+      border-radius: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 3px;
     }
     .bottom-nav button.active { color: #8fb3e6; font-weight: 600; }
-    .bottom-nav button .nav-icon { font-size: 24px; }
+    .bottom-nav button .nav-icon { font-size: 24px; line-height: 1; }
+
+    /* ===== CARDS ===== */
     .card {
       background: #111a24;
       border-radius: 18px;
       padding: 18px;
       margin-bottom: 18px;
       border: 1px solid #1d2735;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
     }
     .card-title {
       font-size: 16px;
@@ -151,43 +189,44 @@
     }
     .card-title .badge {
       font-size: 12px;
+      font-weight: 500;
       background: #1f2a3a;
       padding: 2px 12px;
       border-radius: 30px;
       color: #8ba2c0;
     }
+
+    /* ===== STATUS COLORS ===== */
+    .status-0 { color: #5a6f86; }
+    .status-1 { color: #e89c6a; }
+    .status-2 { color: #e8cc6a; }
+    .status-3 { color: #6a9ce8; }
+    .status-4 { color: #6ae8a5; }
+
+    /* ===== PROGRESS BAR ===== */
     .progress-bar { height: 6px; background: #1f2a3a; border-radius: 20px; overflow: hidden; margin: 8px 0; }
-    .progress-bar .fill { height: 100%; border-radius: 20px; background: #4b7bec; transition: width 0.4s; }
+    .progress-bar .fill { height: 100%; border-radius: 20px; transition: width 0.4s; background: #4b7bec; }
+    .progress-bar .fill.weak { background: #e86a6a; }
+    .progress-bar .fill.medium { background: #e8cc6a; }
+    .progress-bar .fill.strong { background: #6ae8a5; }
+
+    /* ===== SUBJECT GRID ===== */
     .subject-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .subject-card {
-      background: #0e161f;
-      border-radius: 16px;
-      padding: 16px 14px;
-      border-left: 4px solid #2a3a4a;
-      cursor: pointer;
-    }
-    .subject-card:active { background: #182230; }
-    .subject-card h4 { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+    .subject-card { background: #0e161f; border-radius: 16px; padding: 16px 14px; border-left: 4px solid #2a3a4a; cursor: pointer; transition: all 0.2s ease; border: 1px solid #1a2430; }
+    .subject-card:active { background: #182230; transform: scale(0.98); }
+    .subject-card h4 { font-size: 14px; font-weight: 600; margin-bottom: 6px; line-height: 1.2; color: #e2e8f0; }
     .subject-card .sub-meta { font-size: 12px; color: #6b7f9a; display: flex; justify-content: space-between; }
-    .topic-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 8px 0;
-      border-bottom: 1px solid #16202c;
-    }
+
+    /* ===== TOPIC LIST ===== */
+    .topic-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #16202c; }
     .topic-item:last-child { border-bottom: 0; }
     .topic-item .left { display: flex; flex-direction: column; gap: 2px; }
     .topic-item .left .name { font-size: 15px; font-weight: 500; }
     .topic-item .left .sub { font-size: 12px; color: #6b7f9a; }
     .topic-item .right { display: flex; align-items: center; gap: 8px; }
-    .task-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 0;
-      border-bottom: 1px solid #16202c;
-    }
+
+    /* ===== TASK ITEM ===== */
+    .task-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #16202c; }
     .task-item:last-child { border-bottom: 0; }
     .task-item .task-left { display: flex; flex-direction: column; gap: 2px; }
     .task-item .task-left .task-text { font-size: 15px; font-weight: 500; }
@@ -198,21 +237,19 @@
     .task-priority.Moyenne { background: #3d351f; color: #e8cc6a; }
     .task-priority.Basse { background: #1f2a3a; color: #8ba2c0; }
     .task-done { text-decoration: line-through; opacity: 0.6; }
-    .exam-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 8px 0;
-      border-bottom: 1px solid #16202c;
-    }
+
+    /* ===== EXAM ITEM ===== */
+    .exam-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #16202c; }
     .exam-item:last-child { border-bottom: 0; }
     .exam-item .exam-left { display: flex; flex-direction: column; gap: 2px; }
     .exam-item .exam-left .exam-title { font-size: 15px; font-weight: 500; }
     .exam-item .exam-left .exam-date { font-size: 12px; color: #6b7f9a; }
     .exam-item .exam-right { display: flex; align-items: center; gap: 8px; }
     .exam-item .exam-badge { font-size: 11px; padding: 2px 10px; border-radius: 20px; background: #1f2a3a; color: #e8cc6a; }
+
+    /* ===== POMODORO ===== */
     .pomodoro-container { text-align: center; padding: 10px 0; }
-    .pomodoro-container .timer-display { font-size: 48px; font-weight: 700; letter-spacing: 2px; margin: 8px 0; color: #c8d6e5; }
+    .pomodoro-container .timer-display { font-size: 48px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: 2px; margin: 8px 0; color: #c8d6e5; }
     .pomodoro-container .timer-controls { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; margin: 12px 0 4px; }
     .pomodoro-container .timer-controls button { padding: 8px 18px; font-weight: 500; border: 1px solid #2a3442; border-radius: 10px; }
     .pomodoro-container .timer-controls .btn-start { border-color: #4b7bec; color: #8fb3e6; }
@@ -222,6 +259,10 @@
     .pomodoro-container .timer-settings { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px 15px; margin-top: 12px; align-items: center; }
     .pomodoro-container .timer-settings label { font-size: 13px; color: #6b7f9a; display: flex; align-items: center; gap: 6px; }
     .pomodoro-container .timer-settings input[type="number"] { width: 50px; padding: 4px 6px; font-size: 14px; background: #0a0e14; border: 1px solid #2a3442; border-radius: 6px; color: #e2e8f0; text-align: center; }
+
+    /* ===== EMPLOI DU TEMPS ===== */
+    .schedule-day { margin-bottom: 12px; }
+    .schedule-day h4 { color: #c8d6e5; margin-bottom: 6px; border-bottom: 1px solid #1a2430; padding-bottom: 4px; }
     .schedule-item { display: flex; justify-content: space-between; padding: 4px 0; font-size: 14px; border-bottom: 1px solid #111a24; }
     .schedule-item .subj { color: #e2e8f0; }
     .schedule-item .time { color: #6b7f9a; }
@@ -230,29 +271,72 @@
     .schedule-item .type.Cours { background: #1f2a4a; color: #8fb3e6; }
     .schedule-item .type.TD { background: #2a3a2a; color: #8ba25a; }
     .schedule-item .type.TP { background: #3a2a3a; color: #c08ae6; }
+
+    /* ===== PROGRAMMING CATEGORIES ===== */
     .prog-category { background: #0e161f; border-radius: 16px; padding: 12px 16px; margin-bottom: 14px; border: 1px solid #1a2430; }
     .prog-category .cat-header { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 16px; color: #c8d6e5; margin-bottom: 6px; }
     .prog-category .cat-header .cat-icon { font-size: 20px; }
     .prog-category .cat-header .cat-count { margin-left: auto; font-size: 12px; color: #6b7f9a; background: #1a2430; padding: 2px 10px; border-radius: 20px; }
+
+    /* ===== BUTTONS ===== */
     .btn-primary { background: #2a3f60; color: #e2e8f0; padding: 10px 20px; border-radius: 12px; font-weight: 500; display: inline-flex; align-items: center; gap: 8px; border: 1px solid #3a557a; }
     .btn-primary:active { background: #1f3350; }
     .btn-outline { border: 1px solid #2a3442; padding: 6px 14px; border-radius: 10px; font-size: 13px; color: #8ba2c0; }
+    .btn-outline:active { background: #1a2430; }
     .btn-small { padding: 4px 12px; font-size: 13px; border-radius: 8px; }
     .btn-ignore { color: #e86a6a; border-color: #3d1f1f; }
+    .btn-ignore:active { background: #1f0f0f; }
+
+    /* ===== MODAL ===== */
     .modal-overlay { 
-      position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(4px); display: flex; align-items: flex-start; justify-content: center; z-index: 200; padding: 20px; padding-top: 10vh; 
+      position: fixed; 
+      inset: 0; 
+      background: rgba(0,0,0,0.8); 
+      backdrop-filter: blur(4px); 
+      display: flex; 
+      align-items: flex-start; 
+      justify-content: center; 
+      z-index: 200; 
+      padding: 20px; 
+      padding-top: 10vh; 
     }
     .modal-content { 
-      background: #111a24; border-radius: 24px 24px 20px 20px; max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 24px 20px; border: 1px solid #1d2735; position: relative;
+      background: #111a24; 
+      border-radius: 24px 24px 20px 20px; 
+      max-width: 500px; 
+      width: 100%; 
+      max-height: 90vh; 
+      overflow-y: auto; 
+      padding: 24px 20px; 
+      border: 1px solid #1d2735; 
+      position: relative;
     }
-    .modal-content .close-btn { position: absolute; top: 12px; right: 16px; font-size: 20px; color: #6b7f9a; cursor: pointer; padding: 4px; }
+    .modal-content .close-btn {
+      position: absolute;
+      top: 12px;
+      right: 16px;
+      font-size: 20px;
+      color: #6b7f9a;
+      cursor: pointer;
+      padding: 4px;
+    }
     .modal-content .close-btn:hover { color: #e86a6a; }
     .modal-content h3 { font-size: 20px; margin-bottom: 16px; padding-right: 30px; }
     .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+
+    /* ===== STATS ===== */
     .stat-row { display: flex; justify-content: space-between; padding: 8px 0; font-size: 14px; border-bottom: 1px solid #16202c; }
     .stat-row .label { color: #6b7f9a; }
     .stat-row .value { font-weight: 500; }
+
     .chip { display: inline-block; background: #1a2430; padding: 3px 12px; border-radius: 30px; font-size: 12px; color: #8ba2c0; }
+
+    /* ===== PLANNING EDIT ===== */
+    .planning-day-edit { background: #0e161f; border-radius: 12px; padding: 14px; margin-bottom: 12px; border: 1px solid #1a2430; }
+    .planning-day-edit .day-header { display: flex; justify-content: space-between; align-items: center; font-weight: 600; margin-bottom: 8px; }
+    .planning-day-edit input { background: #0a0e14; border: 1px solid #1a2430; padding: 8px 12px; border-radius: 8px; color: #e2e8f0; width: 100%; font-size: 14px; }
+
+    /* ===== RESOURCES CARD ===== */
     .resource-group-title { font-weight: 600; font-size: 16px; color: #c8d6e5; margin: 12px 0 6px; }
     .resource-item { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #16202c; }
     .resource-item:last-child { border-bottom: 0; }
@@ -260,25 +344,84 @@
     .resource-item .left .title { font-size: 15px; font-weight: 500; }
     .resource-item .left .meta { font-size: 12px; color: #6b7f9a; }
     .resource-item .right { display: flex; align-items: center; gap: 6px; }
-    .revision-group { background: #0e161f; border-radius: 12px; margin-bottom: 10px; border: 1px solid #1a2430; overflow: hidden; }
-    .revision-group-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; cursor: pointer; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (min-width: 600px) {
+      .app { padding: 20px 24px 90px; }
+      .subject-grid { grid-template-columns: 1fr 1fr 1fr; }
+      .bottom-nav button { font-size: 13px; gap: 4px; }
+    }
+    @media (min-width: 900px) {
+      .app { max-width: 860px; padding: 30px 40px 90px; }
+      .subject-grid { grid-template-columns: 1fr 1fr 1fr; }
+      .bottom-nav { display: none; }
+      body { padding-bottom: 0; }
+    }
+
+    /* ===== UTILITY ===== */
+    .flex { display: flex; }
+    .flex-between { display: flex; justify-content: space-between; align-items: center; }
+    .gap-8 { gap: 8px; }
+    .gap-12 { gap: 12px; }
+    .mt-8 { margin-top: 8px; }
+    .mt-16 { margin-top: 16px; }
+    .mb-8 { margin-bottom: 8px; }
+    .text-center { text-align: center; }
+    .text-muted { color: #6b7f9a; }
+    .text-small { font-size: 13px; }
+    .text-bold { font-weight: 600; }
+    .hidden { display: none !important; }
+
+    /* ===== ONBOARDING ===== */
+    .onboarding-step { padding: 16px 0; }
+    .onboarding-step h2 { font-size: 24px; margin-bottom: 12px; }
+    .onboarding-step p { color: #8ba2c0; line-height: 1.6; }
+
+    /* ===== SCHEDULE CARD ===== */
+    .schedule-status-container { display: flex; flex-direction: column; gap: 6px; }
+    .schedule-status-item { display: flex; align-items: center; gap: 10px; padding: 6px 8px; border-radius: 8px; background: #0e161f; border: 1px solid #1a2430; }
+    .schedule-status-item .status-icon { font-size: 20px; }
+    .schedule-status-item .status-text { font-size: 14px; font-weight: 500; }
+    .schedule-status-item .status-sub { font-size: 12px; color: #6b7f9a; }
+
+    /* ===== SMART REVISION (COLLAPSIBLE) ===== */
+    .revision-group {
+      background: #0e161f;
+      border-radius: 12px;
+      margin-bottom: 10px;
+      border: 1px solid #1a2430;
+      overflow: hidden;
+    }
+    .revision-group-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 14px;
+      cursor: pointer;
+      user-select: none;
+    }
     .revision-group-header:active { background: #182230; }
     .revision-group-header .group-title { font-weight: 600; font-size: 15px; }
     .revision-group-header .group-meta { font-size: 12px; color: #6b7f9a; }
-    .revision-group-body { padding: 0 14px 12px 14px; display: none; border-top: 1px solid #1a2430; }
+    .revision-group-body {
+      padding: 0 14px 12px 14px;
+      display: none;
+      border-top: 1px solid #1a2430;
+    }
     .revision-group-body.open { display: block; }
-    .revision-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #111a24; }
+    .revision-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid #111a24;
+    }
     .revision-item:last-child { border-bottom: 0; }
     .revision-item .left { display: flex; align-items: center; gap: 8px; }
     .revision-item .left .priority-icon { font-size: 16px; }
     .revision-item .left .name { font-size: 14px; }
     .revision-item .left .sub { font-size: 12px; color: #6b7f9a; }
     .revision-item .right { display: flex; gap: 6px; }
-    .schedule-status-container { display: flex; flex-direction: column; gap: 6px; }
-    .schedule-status-item { display: flex; align-items: center; gap: 10px; padding: 6px 8px; border-radius: 8px; background: #0e161f; border: 1px solid #1a2430; }
-    .schedule-status-item .status-icon { font-size: 20px; }
-    .schedule-status-item .status-text { font-size: 14px; font-weight: 500; }
-    .schedule-status-item .status-sub { font-size: 12px; color: #6b7f9a; }
   </style>
 </head>
 <body>
@@ -287,7 +430,7 @@
 
 <script>
   // ============================================================
-  //  WHITE WOLF SCHOLAR — V24 FINAL (INDEX READY)
+  //  WHITE WOLF SCHOLAR — V23 (RESOURCE FOLDERS)
   // ============================================================
 
   (function() {
@@ -469,7 +612,7 @@
       programming: {},
       tasks: [],
       exams: [],
-      resources: {}, 
+      resources: {}, // { subjectId: { folderName: [ { id, title, url, dateAdded, tag } ] } }
       ignoredTopics: {},
       settings: {
         theme: 'dark',
@@ -765,7 +908,7 @@
       return `
         <div class="app">
           <div class="header">
-            <h1><span class="wolf-icon">🐺</span> White Wolf Scholar <span>v24</span></h1>
+            <h1><span class="wolf-icon">🐺</span> White Wolf Scholar <span>v23</span></h1>
             <div style="position:relative;">
               <span class="settings-btn" id="settings-trigger">⚙️</span>
               <div class="settings-dropdown" id="settings-menu">
@@ -1315,6 +1458,81 @@
       `;
     }
 
+    // ----- RESOURCES (CENTRALIZED + FOLDERS) -----
+    function renderResources() {
+      // Gather all resources
+      let allResources = [];
+      Object.keys(state.resources).forEach(subjectId => {
+        const subject = state.subjects.find(s => s.id === subjectId);
+        const folders = state.resources[subjectId] || {};
+        Object.keys(folders).forEach(folderName => {
+          (folders[folderName] || []).forEach(r => {
+            allResources.push({ ...r, subjectName: subject ? subject.name : 'Matière inconnue', folder: folderName });
+          });
+        });
+      });
+
+      // Apply filter
+      if (state.resourceFilter !== 'Tout') {
+        allResources = allResources.filter(r => r.tag === state.resourceFilter);
+      }
+
+      // Group by subject then by folder
+      const grouped = {};
+      allResources.forEach(r => {
+        if (!grouped[r.subjectName]) grouped[r.subjectName] = {};
+        if (!grouped[r.subjectName][r.folder]) grouped[r.subjectName][r.folder] = [];
+        grouped[r.subjectName][r.folder].push(r);
+      });
+
+      const filterTags = ['Tout', '📖 Cours', '📝 Exercices', '🧪 Examens', '📄 Résumés', '📚 Autres'];
+      const hasResources = Object.keys(grouped).length > 0;
+
+      return `
+        <div>
+          <h2 style="font-size:22px;margin-bottom:16px;">📚 Ressources</h2>
+          
+          <!-- Filters & Folders Controls -->
+          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;align-items:center;">
+            ${filterTags.map(tag => `
+              <button class="btn-small ${state.resourceFilter === tag ? 'btn-primary' : 'btn-outline'}" data-filter-tag="${tag}">${tag}</button>
+            `).join('')}
+            <button class="btn-small btn-outline" data-add-folder>📁 Nouveau dossier</button>
+          </div>
+
+          <div class="card">
+            ${hasResources ? Object.keys(grouped).map(subjectName => `
+              <div style="margin-bottom:16px;">
+                <div class="resource-group-title">${subjectName}</div>
+                ${Object.keys(grouped[subjectName]).map(folderName => `
+                  <div style="margin-bottom:8px;padding-left:12px;">
+                    <div style="font-weight:500;font-size:14px;color:#8ba2c0;">📁 ${folderName} (${grouped[subjectName][folderName].length})</div>
+                    ${grouped[subjectName][folderName].map(r => `
+                      <div class="resource-item" style="padding-left:12px;">
+                        <div class="left">
+                          <span class="title">${r.title}</span>
+                          <span class="meta">${r.tag || '📚 Autres'} • 📅 ${new Date(r.dateAdded).toLocaleDateString('fr-FR')}</span>
+                        </div>
+                        <div class="right">
+                          <select class="btn-small btn-outline" data-move-resource="${r.subjectId}|${r.id}" style="font-size:11px;padding:2px 8px;">
+                            <option value="">📂 Déplacer</option>
+                            ${Object.keys(state.resources[r.subjectId] || {}).map(f => `<option value="${f}">${f}</option>`).join('')}
+                          </select>
+                          <a href="${r.url}" target="_blank" class="btn-small btn-outline" style="text-decoration:none;">🔗</a>
+                          <button class="btn-small btn-outline" data-delete-resource="${r.subjectId}|${r.id}">🗑️</button>
+                        </div>
+                      </div>
+                    `).join('')}
+                  </div>
+                `).join('')}
+              </div>
+            `).join('') : '<div class="text-muted text-small">Aucune ressource ne correspond à ce filtre.</div>'}
+            <button class="btn-primary btn-small mt-8" data-add-resource>➕ Ajouter une ressource</button>
+          </div>
+        </div>
+      `;
+    }
+
     // ----- ACHIEVEMENTS -----
     function renderAchievements() {
       return `
@@ -1404,7 +1622,7 @@
               <div style="display:grid;gap:12px;text-align:center;padding:10px 0;">
                 <div style="font-size:64px;">🐺</div>
                 <div style="font-weight:600;font-size:22px;">White Wolf Scholar</div>
-                <div class="text-muted">Version 24</div>
+                <div class="text-muted">Version 23</div>
                 <div class="text-muted text-small">Built with ❤️ for dedicated students.</div>
               </div>
               <div class="modal-actions">

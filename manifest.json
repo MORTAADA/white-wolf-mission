@@ -2,7 +2,7 @@
   "name": "White Wolf Scholar",
   "short_name": "WWS",
   "description": "Votre assistant d'étude personnel et intelligent.",
-  "start_url": "./WhiteWolfScholar.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#0a0e14",
   "theme_color": "#0a0e14",

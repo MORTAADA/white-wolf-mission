@@ -97,6 +97,48 @@
       color: #c0d0f0;
     }
 
+    /* ===== SETTINGS GEAR ===== */
+    .settings-btn {
+      font-size: 22px;
+      color: #6b7f9a;
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 50%;
+      transition: all 0.2s ease;
+    }
+    .settings-btn:hover { color: #c0d0f0; background: #1a2430; }
+    .settings-dropdown {
+      position: absolute;
+      top: 50px;
+      right: 10px;
+      background: #111a24;
+      border: 1px solid #1d2735;
+      border-radius: 14px;
+      padding: 8px 0;
+      min-width: 220px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+      z-index: 150;
+      display: none;
+    }
+    .settings-dropdown.open { display: block; }
+    .settings-dropdown .item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      color: #c8d6e5;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .settings-dropdown .item:hover { background: #1a2430; }
+    .settings-dropdown .item .icon { font-size: 18px; }
+    .settings-dropdown .divider { height: 1px; background: #1a2430; margin: 4px 16px; }
+    .settings-dropdown .item .toggle-status {
+      margin-left: auto;
+      font-size: 12px;
+      color: #6b7f9a;
+    }
+
     /* ===== BOTTOM NAV ===== */
     .bottom-nav {
       position: fixed;
@@ -256,7 +298,7 @@
       justify-content: center; 
       z-index: 200; 
       padding: 20px; 
-      padding-top: 10vh; /* الثلث العلوي من الشاشة */
+      padding-top: 10vh; 
     }
     .modal-content { 
       background: #111a24; 
@@ -293,6 +335,15 @@
     .planning-day-edit { background: #0e161f; border-radius: 12px; padding: 14px; margin-bottom: 12px; border: 1px solid #1a2430; }
     .planning-day-edit .day-header { display: flex; justify-content: space-between; align-items: center; font-weight: 600; margin-bottom: 8px; }
     .planning-day-edit input { background: #0a0e14; border: 1px solid #1a2430; padding: 8px 12px; border-radius: 8px; color: #e2e8f0; width: 100%; font-size: 14px; }
+
+    /* ===== RESOURCES CARD ===== */
+    .resource-group-title { font-weight: 600; font-size: 16px; color: #c8d6e5; margin: 12px 0 6px; }
+    .resource-item { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #16202c; }
+    .resource-item:last-child { border-bottom: 0; }
+    .resource-item .left { display: flex; flex-direction: column; gap: 2px; }
+    .resource-item .left .title { font-size: 15px; font-weight: 500; }
+    .resource-item .left .meta { font-size: 12px; color: #6b7f9a; }
+    .resource-item .right { display: flex; align-items: center; gap: 6px; }
 
     /* ===== RESPONSIVE ===== */
     @media (min-width: 600px) {
@@ -379,7 +430,7 @@
 
 <script>
   // ============================================================
-  //  WHITE WOLF SCHOLAR — V15 (WITH ROOMS + NEW NAME)
+  //  WHITE WOLF SCHOLAR — V21 (FIXED FILE UPLOAD)
   // ============================================================
 
   (function() {
@@ -479,29 +530,20 @@
       { id: 'proj3', domain: 'Outils & Projets', icon: '🔧', title: 'Projet : Mini jeu en Python' }
     ];
 
-    // ---------- EMPLOI DU TEMPS (AVEC SALLES) ----------
+    // ---------- EMPLOI DU TEMPS ----------
     const COURSE_SCHEDULE = [
-      // Lundi (S.C.CHIM pour toutes les cours)
       { day: 'lundi', start: '08:30', end: '10:00', subject: 'Analyse des solides', type: 'Cours', room: 'S.C.CHIM' },
       { day: 'lundi', start: '10:15', end: '11:45', subject: 'Analyse des solides', type: 'TD', room: 'S.C.CHIM' },
       { day: 'lundi', start: '14:00', end: '15:30', subject: 'Séparation et analyse chromato.', type: 'Cours', room: 'S.C.CHIM' },
       { day: 'lundi', start: '15:45', end: '17:15', subject: 'Séparation et analyse chromato.', type: 'TD', room: 'S.C.CHIM' },
-
-      // Mardi
       { day: 'mardi', start: '08:30', end: '10:00', subject: 'Chimie Analytique', type: 'TD', room: 'S.C.CHIM' },
       { day: 'mardi', start: '10:15', end: '11:45', subject: 'Chimie Analytique', type: 'Cours', room: 'S.C.CHIM' },
       { day: 'mardi', start: '13:15', end: '14:45', subject: 'Spectroscopie atomique', type: 'Cours', room: 'P21' },
-
-      // Mercredi
       { day: 'mercredi', start: '08:30', end: '11:30', subject: 'TP', type: 'TP', room: 'Labo de chimie' },
       { day: 'mercredi', start: '13:30', end: '15:30', subject: 'Hygiène sécurité et environnement', type: 'Cours', room: 'ME205' },
       { day: 'mercredi', start: '15:45', end: '17:00', subject: 'Efficacité énergétique', type: 'Cours', room: 'ME205' },
-
-      // Jeudi
       { day: 'jeudi', start: '08:30', end: '11:30', subject: 'TP', type: 'TP', room: 'Labo de chimie' },
       { day: 'jeudi', start: '14:00', end: '17:00', subject: 'TP', type: 'TP', room: 'Labo de chimie' },
-
-      // Vendredi
       { day: 'vendredi', start: '08:30', end: '10:00', subject: 'Normes et qualité', type: 'Cours', room: 'S.Bib.CHIM' },
       { day: 'vendredi', start: '10:15', end: '11:45', subject: 'Spectroscopie moléculaire', type: 'Cours', room: 'S.Bib.CHIM' },
       { day: 'vendredi', start: '13:45', end: '15:15', subject: 'Spectroscopie moléculaire', type: 'TD', room: 'S.Bib.CHIM' },
@@ -570,8 +612,12 @@
       programming: {},
       tasks: [],
       exams: [],
+      resources: {}, // { subjectId: [ { id, title, url, dateAdded } ] }
       ignoredTopics: {},
-      settings: { theme: 'dark' },
+      settings: {
+        theme: 'dark',
+        showSmartRevision: true
+      },
       onboardingDone: false,
       customSchedule: {},
       isEditingPlanning: false,
@@ -579,6 +625,7 @@
       lastNotifiedClass: '',
       lastNotifiedExam: '',
       lastNotifiedExamHour: '',
+      isSettingsOpen: false,
     };
 
     // ---------- POMODORO STATE ----------
@@ -795,6 +842,7 @@
       else if (route === 'topic' && params.topicId) state.topicId = params.topicId;
       else { state.subjectId = null; state.topicId = null; }
       state.isEditingPlanning = false;
+      state.isSettingsOpen = false;
       render();
     }
 
@@ -859,7 +907,22 @@
       return `
         <div class="app">
           <div class="header">
-            <h1><span class="wolf-icon">🐺</span> White Wolf Scholar <span>v15</span></h1>
+            <h1><span class="wolf-icon">🐺</span> White Wolf Scholar <span>v21</span></h1>
+            <div style="position:relative;">
+              <span class="settings-btn" id="settings-trigger">⚙️</span>
+              <div class="settings-dropdown" id="settings-menu">
+                <div class="item" data-setting="showSmartRevision">
+                  <span class="icon">🧠</span> Recommandations de révision
+                  <span class="toggle-status">${state.settings.showSmartRevision ? '✅' : '❌'}</span>
+                </div>
+                <div class="item" data-setting="theme">
+                  <span class="icon">🎨</span> ${state.settings.theme === 'dark' ? 'Mode sombre' : 'Mode clair'}
+                  <span class="toggle-status">${state.settings.theme === 'dark' ? '🌙' : '☀️'}</span>
+                </div>
+                <div class="divider"></div>
+                <div class="item" data-modal="about"><span class="icon">ℹ️</span> À propos</div>
+              </div>
+            </div>
           </div>
           ${renderContent(active)}
           <nav class="bottom-nav">
@@ -869,6 +932,7 @@
             <button class="${active === 'planning' ? 'active' : ''}" data-route="planning"><span class="nav-icon">📅</span> Planning</button>
             <button class="${active === 'stats' ? 'active' : ''}" data-route="stats"><span class="nav-icon">📈</span> Stats</button>
             <button class="${active === 'emploi' ? 'active' : ''}" data-route="emploi"><span class="nav-icon">📋</span> Emploi</button>
+            <button class="${active === 'resources' ? 'active' : ''}" data-route="resources"><span class="nav-icon">📚</span> Ressources</button>
           </nav>
         </div>
         ${state.modal ? renderModal() : ''}
@@ -885,11 +949,12 @@
         case 'planning': return renderPlanning();
         case 'stats': return renderStats();
         case 'emploi': return renderEmploi();
+        case 'resources': return renderResources();
         default: return renderDashboard();
       }
     }
 
-    // ----- DASHBOARD (WITH ROOM DISPLAY) -----
+    // ----- DASHBOARD -----
     function renderDashboard() {
       const totalTopics = state.topics.length;
       const progressed = state.topics.filter(t => getProgress(t.id).level > 0).length;
@@ -969,7 +1034,7 @@
             `).join('') : '<div class="text-muted text-small">Aucune tâche pour aujourd\'hui. Ajoutez-en une dans Planning.</div>'}
           </div>
 
-          ${hasRevisions ? `
+          ${hasRevisions && state.settings.showSmartRevision ? `
           <div class="card" id="smart-revision-card">
             <div class="card-title">🧠 À réviser maintenant <span class="badge">${Object.values(groupedRevisions).reduce((a, b) => a + b.length, 0)}</span></div>
             ${Object.keys(groupedRevisions).map(subjectId => {
@@ -1079,6 +1144,7 @@
       const sub = state.subjects.find(s => s.id === state.subjectId);
       if (!sub) return '<div class="card">Matière non trouvée</div>';
       const tops = state.topics.filter(t => t.subject_id === sub.id);
+
       return `
         <div>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
@@ -1354,7 +1420,7 @@
       `;
     }
 
-    // ----- EMPLOI DU TEMPS (AVEC SALLES) -----
+    // ----- EMPLOI DU TEMPS -----
     function renderEmploi() {
       const days = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
       const dayKeys = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'];
@@ -1391,6 +1457,42 @@
       `;
     }
 
+    // ----- RESOURCES (CENTRALIZED) -----
+    function renderResources() {
+      const subjectKeys = Object.keys(state.resources).filter(id => state.resources[id].length > 0);
+      const hasResources = subjectKeys.length > 0;
+
+      return `
+        <div>
+          <h2 style="font-size:22px;margin-bottom:16px;">📚 Ressources</h2>
+          <div class="card">
+            ${hasResources ? subjectKeys.map(id => {
+              const subject = state.subjects.find(s => s.id === id);
+              const items = state.resources[id];
+              return `
+                <div style="margin-bottom:12px;">
+                  <div class="resource-group-title">${subject ? subject.name : 'Matière inconnue'} (${items.length})</div>
+                  ${items.map(r => `
+                    <div class="resource-item">
+                      <div class="left">
+                        <span class="title">${r.title}</span>
+                        <span class="meta">📅 ${new Date(r.dateAdded).toLocaleDateString('fr-FR')}</span>
+                      </div>
+                      <div class="right">
+                        <a href="${r.url}" target="_blank" class="btn-small btn-outline" style="text-decoration:none;">🔗</a>
+                        <button class="btn-small btn-outline" data-delete-resource="${id}|${r.id}">🗑️</button>
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+              `;
+            }).join('') : '<div class="text-muted text-small">Aucune ressource enregistrée.</div>'}
+            <button class="btn-primary btn-small mt-8" data-add-resource>➕ Ajouter une ressource</button>
+          </div>
+        </div>
+      `;
+    }
+
     // ----- ACHIEVEMENTS -----
     function renderAchievements() {
       return `
@@ -1408,6 +1510,57 @@
     function renderModal() {
       if (!state.modal) return '';
       const m = state.modal;
+      if (m.type === 'resource') {
+        return `
+          <div class="modal-overlay">
+            <div class="modal-content">
+              <span class="close-btn" data-close-modal>❌</span>
+              <h3>➕ Ajouter une ressource</h3>
+              <div style="display:grid;gap:12px;">
+                <select id="resource-subject">
+                  <option value="">Choisir une matière</option>
+                  ${state.subjects.map(s => `<option value="${s.id}">${s.name}</option>`).join('')}
+                </select>
+                <input id="resource-title" placeholder="Titre de la ressource" />
+                
+                <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+                  <input id="resource-url" placeholder="https://..." style="flex:1;" />
+                  <div style="position:relative; width: auto;">
+                    <input type="file" id="resource-file" accept=".pdf,.docx,.pptx,.jpg,.png" 
+                           style="position:absolute; inset:0; opacity:0; width:100%; height:100%; cursor:pointer;" />
+                    <label for="resource-file" class="btn-outline" style="display:inline-block; padding: 6px 14px; border-radius: 10px; border:1px solid #2a3442; color:#8ba2c0; cursor:pointer; font-size:13px;">
+                      📄 Choisir un fichier
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-actions">
+                <button class="btn-outline" data-close-modal>Annuler</button>
+                <button class="btn-primary" data-save-resource>Enregistrer</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+      if (m.type === 'about') {
+        return `
+          <div class="modal-overlay">
+            <div class="modal-content">
+              <span class="close-btn" data-close-modal>❌</span>
+              <h3>ℹ️ À propos</h3>
+              <div style="display:grid;gap:12px;text-align:center;padding:10px 0;">
+                <div style="font-size:64px;">🐺</div>
+                <div style="font-weight:600;font-size:22px;">White Wolf Scholar</div>
+                <div class="text-muted">Version 21</div>
+                <div class="text-muted text-small">Built with ❤️ for dedicated students.</div>
+              </div>
+              <div class="modal-actions">
+                <button class="btn-primary" data-close-modal>Fermer</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }
       if (m.type === 'exam') {
         return `
           <div class="modal-overlay">
@@ -1595,6 +1748,101 @@
       });
       document.querySelectorAll('.topic-item[data-topic-id]').forEach(el => {
         el.addEventListener('click', () => navigate('topic', { topicId: el.dataset.topicId }));
+      });
+
+      // ----- SETTINGS MENU -----
+      document.getElementById('settings-trigger')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        state.isSettingsOpen = !state.isSettingsOpen;
+        const menu = document.getElementById('settings-menu');
+        if (menu) menu.classList.toggle('open');
+      });
+      document.addEventListener('click', (e) => {
+        const menu = document.getElementById('settings-menu');
+        const trigger = document.getElementById('settings-trigger');
+        if (menu && menu.classList.contains('open') && !menu.contains(e.target) && !trigger.contains(e.target)) {
+          state.isSettingsOpen = false;
+          menu.classList.remove('open');
+        }
+      });
+
+      // ----- SETTINGS ITEMS -----
+      document.querySelectorAll('[data-modal]').forEach(el => {
+        el.addEventListener('click', () => {
+          state.isSettingsOpen = false;
+          document.getElementById('settings-menu')?.classList.remove('open');
+          state.modal = { type: el.dataset.modal };
+          render();
+        });
+      });
+
+      document.querySelectorAll('[data-setting]').forEach(el => {
+        el.addEventListener('click', () => {
+          const setting = el.dataset.setting;
+          if (setting === 'theme') {
+            state.settings.theme = state.settings.theme === 'dark' ? 'light' : 'dark';
+            document.body.style.background = state.settings.theme === 'dark' ? '#0a0e14' : '#f0f4f8';
+            document.body.style.color = state.settings.theme === 'dark' ? '#e2e8f0' : '#1a202c';
+          } else if (setting === 'showSmartRevision') {
+            state.settings.showSmartRevision = !state.settings.showSmartRevision;
+          }
+          state.isSettingsOpen = false;
+          document.getElementById('settings-menu')?.classList.remove('open');
+          saveState();
+          render();
+        });
+      });
+
+      // ----- RESOURCE EVENTS (Centralized) -----
+      document.querySelectorAll('[data-add-resource]').forEach(el => {
+        el.addEventListener('click', () => {
+          state.modal = { type: 'resource' };
+          render();
+        });
+      });
+      
+      // Gestion du fichier (nouvelle méthode sans erreur)
+      document.getElementById('resource-file')?.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const urlInput = document.getElementById('resource-url');
+          urlInput.value = URL.createObjectURL(file);
+          urlInput.placeholder = 'Fichier chargé : ' + file.name;
+        }
+      });
+
+      document.querySelectorAll('[data-save-resource]').forEach(el => {
+        el.addEventListener('click', () => {
+          const subjectId = document.getElementById('resource-subject')?.value;
+          const title = document.getElementById('resource-title')?.value;
+          const url = document.getElementById('resource-url')?.value;
+          if (!subjectId || !title || !url) { alert('Veuillez remplir tous les champs.'); return; }
+          
+          if (!state.resources[subjectId]) state.resources[subjectId] = [];
+          
+          state.resources[subjectId].push({
+            id: generateId(),
+            title: title,
+            url: url,
+            dateAdded: new Date().toISOString().slice(0,10)
+          });
+          state.modal = null;
+          saveState();
+          render();
+        });
+      });
+      document.querySelectorAll('[data-delete-resource]').forEach(el => {
+        el.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const data = el.dataset.deleteResource.split('|');
+          const subjectId = data[0];
+          const resourceId = data[1];
+          if (confirm('Supprimer cette ressource ?')) {
+            state.resources[subjectId] = (state.resources[subjectId] || []).filter(r => r.id !== resourceId);
+            saveState();
+            render();
+          }
+        });
       });
 
       // ----- MASTER / TOPIC EVENTS -----
@@ -1937,6 +2185,7 @@
         programming: state.programming,
         tasks: state.tasks,
         exams: state.exams,
+        resources: state.resources,
         ignoredTopics: state.ignoredTopics,
         settings: state.settings,
         onboardingDone: state.onboardingDone,
@@ -1957,8 +2206,9 @@
           state.programming = data.programming || {};
           state.tasks = data.tasks || [];
           state.exams = data.exams || [];
+          state.resources = data.resources || {};
           state.ignoredTopics = data.ignoredTopics || {};
-          state.settings = data.settings || { theme: 'dark' };
+          state.settings = data.settings || { theme: 'dark', showSmartRevision: true };
           state.onboardingDone = data.onboardingDone || false;
           state.customSchedule = data.customSchedule || {};
         } else {
@@ -1970,8 +2220,9 @@
           state.programming = {};
           state.tasks = [];
           state.exams = [];
+          state.resources = {};
           state.ignoredTopics = {};
-          state.settings = { theme: 'dark' };
+          state.settings = { theme: 'dark', showSmartRevision: true };
           state.onboardingDone = false;
           state.customSchedule = {};
         }
@@ -1991,6 +2242,9 @@
     async function init() {
       await openDB();
       await loadState();
+      // Apply theme on load
+      document.body.style.background = state.settings.theme === 'dark' ? '#0a0e14' : '#f0f4f8';
+      document.body.style.color = state.settings.theme === 'dark' ? '#e2e8f0' : '#1a202c';
       render();
       if (Notification.permission === 'default') {
         Notification.requestPermission();
